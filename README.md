@@ -5,7 +5,7 @@
 **Real-time detection, location and explanation of leaks and water-quality problems in water pipelines.**
 It turns raw in-pipe sensor streams into decisions: *what* is wrong, *where*, *how serious*, *why*, and *what to do*.
 
-Designed and built by **[Nelly Almaktoum](https://github.com/nelmkt)**, lead developer.
+Designed and built by **[Nelly Almaktoum](https://github.com/nelmkt)**, technical lead and sole developer.
 
 ﴿ قُلْ أَرَأَيْتُمْ إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَاءٍ مَّعِينٍ ﴾ (الملك: ٣٠)
 *"Say: Have you considered: if your water were to sink away, who could bring you flowing water?"*
@@ -240,11 +240,11 @@ tests/           pytest suite
 
 | Member | Background | Role |
 |---|---|---|
-| **Nelly Almaktoum** (نيللي المكتوم) | Computer Science | **Lead developer.** Designed and built the entire software system from scratch: the physics simulator, the ML models, the evaluation and quality gate, the cloud API and the dashboard |
-| Mohammed Alzahrani (محمد الزهراني) | Water Resources Science and Management | Project idea and concept |
-| Joud Alkhateeb (جود الخطيب) | Chemistry | Project idea and concept |
-| Muhannad Almehri (مهند المهري) | Industrial Engineering | Project idea and concept |
-| Abdulmoamen Ahmed (عبدالمؤمن أحمد) | Mechanical Engineering | Project idea and concept |
+| **Nelly Almaktoum** (نيللي المكتوم) | Computer Science | **Technical lead and sole developer.** Owned the whole technical side end to end: technical consulting and system design, turning the idea into a working system, the physics simulator and data, ML model design, training and evaluation, the quality gate, the cloud API, the dashboard, deployment and documentation |
+| Mohammed Alzahrani (محمد الزهراني) | Water Resources Science and Management | Team member, project idea |
+| Joud Alkhateeb (جود الخطيب) | Chemistry | Team member, project idea |
+| Muhannad Almehri (مهند المهري) | Industrial Engineering | Team member, project idea |
+| Abdulmoamen Ahmed (عبدالمؤمن أحمد) | Mechanical Engineering | Team member, project idea |
 
 ## ملخص بالعربي
 
@@ -259,6 +259,6 @@ tests/           pytest suite
   - اكتشاف التسريب خلال 5 دقائق تقريباً
 - **جودة النموذج وموثوقيته:** تجارب تُدار بملفات إعداد، وسجل لإصدارات النماذج مع بطاقة لكل نموذج، واختبار جودة تلقائي يمنع أي تحديث يُضعف دقة النموذج، ومراقبة لانحراف البيانات أثناء التشغيل.
 
-**الفريق:** صمّمت وبرمجت **نيللي المكتوم** (علوم حاسب) النظام البرمجي بالكامل من الصفر، وفكرة المشروع لأعضاء الفريق: محمد الزهراني (علوم وإدارة موارد المياه)، جود الخطيب (كيمياء)، مهند المهري (هندسة صناعية)، عبدالمؤمن أحمد (هندسة ميكانيكية).
+**الفريق:** تولّت **نيللي المكتوم** (علوم حاسب) الجانب التقني بالكامل من البداية إلى النهاية: الاستشارة التقنية وتصميم النظام، والتنفيذ والبرمجة، والمحاكاة والبيانات، وتصميم نماذج تعلّم الآلة وتدريبها وتقييمها، والمنصة السحابية ولوحة التحكم. وأعضاء الفريق أصحاب فكرة المشروع: محمد الزهراني (علوم وإدارة موارد المياه)، جود الخطيب (كيمياء)، مهند المهري (هندسة صناعية)، عبدالمؤمن أحمد (هندسة ميكانيكية).
 
 > جميع النتائج على بيانات محاكاة، ويجب إعادة قياسها على بيانات حقيقية من الميدان.
