@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Pipe AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f3f6fa; --card: #ffffff; --ink: #14213d; --muted: #5b6b82; --line: #dfe6ef;
+    --blue: #1f6fd1; --blue-soft: #e5f0fc; --green: #138a5e; --green-soft: #e3f5ec;
+    --amber: #c27803; --amber-soft: #fdf3dc; --red: #c8322b; --red-soft: #fce8e6;
+    --water: #4aa3e8; --pipe: #8a96a6;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font-family: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif; font-size: 15px; }
+  header { display: flex; align-items: center; gap: 16px; padding: 14px 24px; background: #0f2a4a; color: #fff; flex-wrap: wrap; }
+  header h1 { font-size: 19px; margin: 0; font-weight: 600; }
+  header .sub { color: #a9c1de; font-size: 13px; }
+  header .spacer { flex: 1; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; font-size: 12.5px; font-weight: 500; }
+  header .chip { background: rgba(255,255,255,.12); }
+  button, select, input { font: inherit; }
+  .btn { border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 7px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
+  .btn:hover { border-color: var(--blue); }
+  .btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+  header .btn { background: transparent; color: #fff; border-color: rgba(255,255,255,.35); }
+  main { max-width: 1280px; margin: 0 auto; padding: 18px 16px 40px; display: grid; gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; min-width: 0; }
+  .card h2 { font-size: 14px; margin: 0 0 12px; color: var(--muted); font-weight: 600; letter-spacing: .2px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .grid2 { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; }
+  @media (max-width: 900px) { .grid3, .grid2 { grid-template-columns: 1fr; } }
+
+  #banner { display: flex; align-items: center; gap: 16px; border-radius: 14px; padding: 16px 20px; border: 1px solid; flex-wrap: wrap; }
+  #banner .icon { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-size: 22px; color: #fff; flex: none; }
+  #banner .title { font-size: 21px; font-weight: 700; }
+  #banner .meta { color: var(--muted); font-size: 13.5px; margin-top: 2px; }
+  #banner.normal { background: var(--green-soft); border-color: #bfe6d3; } #banner.normal .icon { background: var(--green); }
+  #banner.watch { background: var(--amber-soft); border-color: #f2dca6; } #banner.watch .icon { background: var(--amber); }
+  #banner.alert { background: var(--red-soft); border-color: #f3c3be; } #banner.alert .icon { background: var(--red); }
+  #banner.warm { background: var(--blue-soft); border-color: #c7dcf5; } #banner.warm .icon { background: var(--blue); }
+  #banner .kpis { margin-inline-start: auto; display: flex; gap: 22px; }
+  .kpi .v { font-size: 22px; font-weight: 700; } .kpi .l { font-size: 12px; color: var(--muted); }
+
+  #pipe { width: 100%; height: auto; display: block; }
+  .legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; margin-top: 6px; }
+  .legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-inline-end: 4px; }
+
+  .bar { display: grid; grid-template-columns: 120px 1fr 48px; align-items: center; gap: 8px; margin: 6px 0; font-size: 13.5px; }
+  .bar .track { height: 9px; background: #edf1f6; border-radius: 9px; overflow: hidden; }
+  .bar .fill { height: 100%; background: var(--blue); border-radius: 9px; transition: width .4s; }
+  .bar.top .fill { background: var(--red); } .bar.top span:first-child { font-weight: 600; }
+  .big { font-size: 26px; font-weight: 700; } .muted { color: var(--muted); }
+  .sev { display: flex; gap: 4px; margin: 10px 0 6px; }
+  .sev div { flex: 1; height: 10px; border-radius: 4px; background: #edf1f6; }
+  .sev .on.low { background: #6cc19a; } .sev .on.medium { background: #f0b429; } .sev .on.high { background: #e8743b; } .sev .on.critical { background: var(--red); }
+  .stat { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--line); font-size: 14px; }
+  .stat:last-child { border: 0; }
+
+  #recs { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+  #recs li { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; background: #f7f9fc; border: 1px solid var(--line); }
+  .prio { flex: none; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 99px; margin-top: 2px; }
+  .prio.immediate { background: var(--red-soft); color: var(--red); } .prio.h24 { background: var(--amber-soft); color: var(--amber); }
+  .prio.scheduled { background: var(--blue-soft); color: var(--blue); } .prio.monitor { background: var(--green-soft); color: var(--green); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: start; padding: 7px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 500; font-size: 12.5px; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-inline-end: 6px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .tabs button { border: 1px solid var(--line); background: #fff; padding: 5px 11px; border-radius: 99px; cursor: pointer; font-size: 13px; }
+  .tabs button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  canvas { width: 100%; height: 240px; display: block; }
+  .series { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+  .form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; align-items: end; }
+  .form label { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); }
+  .form select, .form input[type=range] { width: 100%; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  .truth { margin-top: 10px; font-size: 13px; padding: 8px 10px; border-radius: 8px; background: #f7f9fc; border: 1px dashed var(--line); }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .metrics div { background: #f7f9fc; border-radius: 10px; padding: 10px 12px; }
+  .metrics b { display: block; font-size: 20px; } .metrics span { font-size: 12px; color: var(--muted); }
+  footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 10px; }
+  [dir=ltr] body, body[dir=ltr] { font-family: "Segoe UI", system-ui, sans-serif; }
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1 data-i18n="title"></h1>
+    <div class="sub" data-i18n="subtitle"></div>
+  </div>
+  <div class="spacer"></div>
+  <span class="chip" id="modeChip"></span>
+  <span class="chip" id="clock"></span>
+  <button class="btn" id="langBtn">English</button>
+</header>
+
+<main>
+  <section id="banner" class="warm">
+    <div class="icon" id="bannerIcon">…</div>
+    <div>
+      <div class="title" id="bannerTitle"></div>
+      <div class="meta" id="bannerMeta"></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="v" id="kpiConf">—</div><div class="l" data-i18n="confidence"></div></div>
+      <div class="kpi"><div class="v" id="kpiSev">—</div><div class="l" data-i18n="severity"></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="pipeMap"></h2>
+    <svg id="pipe" style="direction:ltr" viewBox="0 0 1000 230" role="img" aria-label="pipeline map"></svg>
+    <div class="legend">
+      <span><i style="background:var(--water)"></i><span data-i18n="legendFlow"></span></span>
+      <span><i style="background:#f4a09a"></i><span data-i18n="legendRisk"></span></span>
+      <span><i style="background:var(--red);border-radius:50%"></i><span data-i18n="legendEst"></span></span>
+      <span><i style="background:var(--amber);border-radius:50%"></i><span data-i18n="legendDevice"></span></span>
+    </div>
+  </section>
+
+  <section class="grid3">
+    <div class="card">
+      <h2 data-i18n="diagnosis"></h2>
+      <div id="probs"></div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="location"></h2>
+      <div class="big" id="locMain">—</div>
+      <div class="muted" id="locSub"></div>
+      <div id="segProbs" style="margin-top:10px"></div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="severityImpact"></h2>
+      <div class="big" id="sevMain">—</div>
+      <div class="sev" id="sevBar"><div class="low"></div><div class="medium"></div><div class="high"></div><div class="critical"></div></div>
+      <div class="stat"><span data-i18n="anomalyScore"></span><b id="anomaly">—</b></div>
+      <div class="stat"><span data-i18n="estLoss"></span><b id="loss">—</b></div>
+      <div class="stat"><span data-i18n="verify"></span><b id="streak">—</b></div>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div class="card">
+      <h2 data-i18n="recs"></h2>
+      <ul id="recs"></ul>
+    </div>
+    <div class="card">
+      <h2 data-i18n="incidents"></h2>
+      <table><thead><tr><th>#</th><th data-i18n="event"></th><th data-i18n="start"></th><th data-i18n="state"></th></tr></thead>
+        <tbody id="incidents"></tbody></table>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2 data-i18n="liveData"></h2>
+    <div class="tabs" id="tabs"></div>
+    <canvas id="chart"></canvas>
+    <div class="series" id="seriesLegend"></div>
+  </section>
+
+  <section class="grid2">
+    <div class="card" id="demoCard">
+      <h2 data-i18n="demo"></h2>
+      <div class="form">
+        <label><span data-i18n="faultType"></span>
+          <select id="fFault"></select></label>
+        <label id="lSeg"><span data-i18n="segment"></span><select id="fSeg"></select></label>
+        <label id="lDev" class="hide"><span data-i18n="device"></span><select id="fDev"></select></label>
+        <label id="lSen" class="hide"><span data-i18n="sensor"></span><select id="fSen"></select></label>
+        <label><span><span data-i18n="size"></span> <b id="sevVal">60%</b></span><input type="range" id="fSev" min="5" max="100" value="60"></label>
+        <div style="display:flex;gap:8px;grid-column:1/-1"><button class="btn primary" id="injectBtn" data-i18n="inject"></button><button class="btn" id="resetBtn" data-i18n="reset"></button></div>
+      </div>
+      <div class="truth" id="truth"></div>
+    </div>
+    <div class="card">
+      <h2 data-i18n="modelPerf"></h2>
+      <div class="metrics" id="metrics"><span class="muted">—</span></div>
+      <p class="muted" style="font-size:12.5px;margin:10px 0 0" data-i18n="perfNote"></p>
+    </div>
+  </section>
+</main>
+<footer data-i18n="footer"></footer>
+
+<script>
+const I18N = {
+  ar: {
+    title: "منصة المراقبة الذكية لخطوط المياه", subtitle: "جمع البيانات ← تحليل بالذكاء الاصطناعي ← تحديد المشكلة ومكانها ← توصية بالإجراء",
+    confidence: "نسبة الثقة", severity: "مستوى الخطورة", pipeMap: "خريطة الخط ومكان المشكلة",
+    legendFlow: "اتجاه التدفق", legendRisk: "احتمال وجود المشكلة في المقطع", legendEst: "الموقع التقديري", legendDevice: "جهاز به عطل حساس",
+    diagnosis: "تشخيص الذكاء الاصطناعي", location: "مكان المشكلة", severityImpact: "الخطورة والأثر",
+    anomalyScore: "مؤشر الشذوذ", estLoss: "الفاقد المقدّر", verify: "دقائق التأكيد",
+    recs: "الإجراءات المقترحة", incidents: "سجل الحوادث", event: "الحدث", start: "البداية", state: "الحالة",
+    liveData: "القراءات الحية من الأجهزة (آخر ساعتين)", demo: "محاكاة سيناريو عطل (للعرض)",
+    faultType: "نوع العطل", segment: "المقطع", device: "الجهاز", sensor: "الحساس", size: "الحجم / الشدة",
+    inject: "تشغيل السيناريو", reset: "إعادة للوضع الطبيعي", modelPerf: "دقة النموذج (اختبار على سيناريوهات جديدة)",
+    perfNote: "تم القياس على بيانات محاكاة لم يرها النموذج أثناء التدريب. التفاصيل في reports/EVALUATION.md",
+    footer: "نموذج أولي — بيانات تجريبية محاكاة لحساسات الضغط والتدفق وpH وEC والصوت والاهتزاز",
+    warm: "جاري تجميع البيانات", warmMeta: n => `يحتاج النظام ${n} دقيقة إضافية من القراءات قبل أول تحليل`,
+    devicesOk: "جميع الأجهزة متصلة", active: "نشط", resolved: "تمت المعالجة", minutes: "دقيقة",
+    between: (a, b) => `بين الجهاز ${a} والجهاز ${b}`, kmEst: km => `الموقع التقديري: الكيلومتر ${km}`,
+    devLabel: d => `الجهاز ${d}`, segLabel: (a, b) => `المقطع ${a}–${b}`, sensorOn: (s, d) => `حساس ${s} — الجهاز ${d}`,
+    truthNone: "الحقيقة المحاكاة: لا يوجد عطل", truth: t => `الحقيقة المحاكاة (للمقارنة فقط): ${t}`,
+    ingestMode: "وضع استقبال البيانات من الأجهزة", simMode: "وضع المحاكاة", m3h: "م³/س", noLoss: "—",
+    simTime: t => `الوقت ${t}`, confirming: (s, p) => `${s}/${p}`,
+    faults: { normal: "طبيعي", leak: "تسريب", blockage: "انسداد", contamination: "تلوث", corrosion: "تآكل", sensor_fault: "عطل حساس", watch: "غير مصنف" },
+    levels: { low: "منخفضة", medium: "متوسطة", high: "عالية", critical: "حرجة" },
+    prio: { immediate: "فوري", "24h": "خلال 24 ساعة", scheduled: "مجدول", monitor: "متابعة" },
+    sensors: { pressure: "الضغط", flow: "التدفق", ph: "pH", ec: "EC", acoustic: "الصوت", vibration: "الاهتزاز" },
+    metricNames: { fault_type_accuracy: "دقة تحديد نوع العطل", segment_accuracy: "دقة تحديد المقطع", detection_rate: "نسبة الاكتشاف",
+      false_alarms_per_day: "إنذارات كاذبة / يوم", median_delay_min: "زمن الاكتشاف (دقيقة)", position_mae_m: "خطأ الموقع (متر)" },
+  },
+  en: {
+    title: "Smart Water-Pipe Monitoring", subtitle: "Collect data → AI analysis → locate the problem → recommend action",
+    confidence: "Confidence", severity: "Severity", pipeMap: "Pipeline map & problem location",
+    legendFlow: "Flow direction", legendRisk: "Probability the problem is in the segment", legendEst: "Estimated position", legendDevice: "Device with faulty sensor",
+    diagnosis: "AI diagnosis", location: "Problem location", severityImpact: "Severity & impact",
+    anomalyScore: "Anomaly score", estLoss: "Estimated loss", verify: "Confirmation minutes",
+    recs: "Recommended actions", incidents: "Incident log", event: "Event", start: "Start", state: "State",
+    liveData: "Live device readings (last 2 h)", demo: "Fault scenario simulator (demo)",
+    faultType: "Fault type", segment: "Segment", device: "Device", sensor: "Sensor", size: "Size / intensity",
+    inject: "Run scenario", reset: "Back to normal", modelPerf: "Model accuracy (tested on unseen scenarios)",
+    perfNote: "Measured on simulated data never used in training. Details in reports/EVALUATION.md",
+    footer: "Prototype — simulated pressure, flow, pH, EC, acoustic and vibration sensors",
+    warm: "Collecting data", warmMeta: n => `The AI needs ${n} more minutes of readings before its first assessment`,
+    devicesOk: "All devices online", active: "active", resolved: "resolved", minutes: "min",
+    between: (a, b) => `Between Device ${a} and Device ${b}`, kmEst: km => `Estimated at km ${km}`,
+    devLabel: d => `Device ${d}`, segLabel: (a, b) => `Segment ${a}–${b}`, sensorOn: (s, d) => `${s} sensor — Device ${d}`,
+    truthNone: "Simulated ground truth: no fault", truth: t => `Simulated ground truth (for comparison only): ${t}`,
+    ingestMode: "Device ingest mode", simMode: "Simulation mode", m3h: "m³/h", noLoss: "—",
+    simTime: t => `t = ${t}`, confirming: (s, p) => `${s}/${p}`,
+    faults: { normal: "Normal", leak: "Leak", blockage: "Blockage", contamination: "Contamination", corrosion: "Corrosion", sensor_fault: "Sensor fault", watch: "Unclassified" },
+    levels: { low: "Low", medium: "Medium", high: "High", critical: "Critical" },
+    prio: { immediate: "Immediate", "24h": "Within 24 h", scheduled: "Scheduled", monitor: "Monitor" },
+    sensors: { pressure: "Pressure", flow: "Flow", ph: "pH", ec: "EC", acoustic: "Acoustic", vibration: "Vibration" },
+    metricNames: { fault_type_accuracy: "Fault-type accuracy", segment_accuracy: "Segment accuracy", detection_rate: "Detection rate",
+      false_alarms_per_day: "False alarms / day", median_delay_min: "Detection delay (min)", position_mae_m: "Position error (m)" },
+  },
+};
+const DEV_COLORS = ["#1f6fd1", "#18a589", "#8e5bd6", "#e8743b", "#c8322b", "#5b6b82"];
+const LEVELS = ["low", "medium", "high", "critical"];
+let lang = "ar";
+try { lang = localStorage.getItem("sp-lang") || "ar"; } catch (e) {}
+let metric = "pressure";
+let S = null;
+const $ = id => document.getElementById(id);
+const T = () => I18N[lang];
+const pct = v => v == null ? "—" : `${Math.round(v * 100)}%`;
+const fmtTime = m => { if (m == null) return "—"; const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = Math.floor(m % 60);
+  return `${lang === "ar" ? "اليوم" : "Day"} ${d + 1} ${String(h).padStart(2, "0")}:${String(mm).padStart(2, "0")}`; };
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el => { const v = T()[el.dataset.i18n]; if (typeof v === "string") el.textContent = v; });
+  $("langBtn").textContent = lang === "ar" ? "English" : "العربية";
+  buildForm(); buildTabs(); loadMetrics(); if (S) render(S);
+}
+$("langBtn").onclick = () => { lang = lang === "ar" ? "en" : "ar"; try { localStorage.setItem("sp-lang", lang); } catch (e) {} applyLang(); };
+
+function buildForm() {
+  const t = T(), keepFault = $("fFault").value || "leak";
+  $("fFault").innerHTML = ["leak", "blockage", "contamination", "corrosion", "sensor_fault"].map(f => `<option value="${f}">${t.faults[f]}</option>`).join("");
+  $("fFault").value = keepFault;
+  const seg = $("fSeg").value || "3";
+  $("fSeg").innerHTML = [1, 2, 3, 4, 5].map(s => `<option value="${s}">${t.segLabel(s, s + 1)}</option>`).join("");
+  $("fSeg").value = seg;
+  const dev = $("fDev").value || "4";
+  $("fDev").innerHTML = [1, 2, 3, 4, 5, 6].map(d => `<option value="${d}">${t.devLabel(d)}</option>`).join("");
+  $("fDev").value = dev;
+  const sen = $("fSen").value || "pressure";
+  $("fSen").innerHTML = ["pressure", "flow", "ph", "ec"].map(s => `<option value="${s}">${t.sensors[s]}</option>`).join("");
+  $("fSen").value = sen;
+  toggleForm();
+}
+function toggleForm() {
+  const sf = $("fFault").value === "sensor_fault";
+  $("lSeg").classList.toggle("hide", sf); $("lDev").classList.toggle("hide", !sf); $("lSen").classList.toggle("hide", !sf);
+}
+$("fFault").onchange = toggleForm;
+$("fSev").oninput = () => $("sevVal").textContent = $("fSev").value + "%";
+$("injectBtn").onclick = async () => {
+  const fault = $("fFault").value;
+  const body = { fault, severity: $("fSev").value / 100 };
+  if (fault === "sensor_fault") { body.device = +$("fDev").value; body.sensor = $("fSen").value; body.mode = "drift"; }
+  else body.segment = +$("fSeg").value;
+  await fetch("/api/sim/inject", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  poll();
+};
+$("resetBtn").onclick = async () => { await fetch("/api/sim/reset", { method: "POST" }); poll(); };
+
+function buildTabs() {
+  const t = T();
+  $("tabs").innerHTML = ["pressure", "flow", "ph", "ec", "acoustic", "vibration"].map(s =>
+    `<button class="${s === metric ? "on" : ""}" data-s="${s}">${t.sensors[s]}</button>`).join("");
+  $("tabs").querySelectorAll("button").forEach(b => b.onclick = () => { metric = b.dataset.s; buildTabs(); if (S) drawChart(S); });
+  $("seriesLegend").innerHTML = DEV_COLORS.map((c, i) => `<span><i class="dot" style="background:${c}"></i>${t.devLabel(i + 1)}</span>`).join("");
+}
+
+async function loadMetrics() {
+  try {
+    const r = await fetch("/api/metrics"); if (!r.ok) return;
+    const m = await r.json(), t = T();
+    const fmt = (k, v) => k.endsWith("_rate") || k.endsWith("accuracy") ? pct(v) : (k === "false_alarms_per_day" ? v.toFixed(2) : Math.round(v));
+    $("metrics").innerHTML = Object.keys(t.metricNames).map(k => `<div><b>${fmt(k, m[k])}</b><span>${t.metricNames[k]}</span></div>`).join("");
+  } catch (e) {}
+}
+
+function drawPipe(s) {
+  const a = s.assessment, t = T(), W = 1000, x0 = 70, x1 = 930, y = 105;
+  const X = km => { const f = km / 5; return lang === "ar" ? x1 - f * (x1 - x0) : x0 + f * (x1 - x0); };
+  let segRisk = [0, 0, 0, 0, 0];
+  if (a && a.location && a.location.kind === "segment" && a.status === "alert") {
+    const pf = a.fault_probs[a.fault] || 1; segRisk = a.location.segment_probs.map(p => p * pf);
+  }
+  let g = `<defs><linearGradient id="water" x1="0" x2="1"><stop offset="0" stop-color="#7cc0f2"/><stop offset="1" stop-color="#3b8fd8"/></linearGradient></defs>`;
+  g += `<rect x="${x0 - 30}" y="${y - 22}" width="${x1 - x0 + 60}" height="44" rx="10" fill="#c9d2dd"/>`;
+  g += `<rect x="${x0 - 26}" y="${y - 15}" width="${x1 - x0 + 52}" height="30" rx="7" fill="url(#water)"/>`;
+  for (let j = 0; j < 5; j++) {
+    const xa = X(j), xb = X(j + 1), r = segRisk[j];
+    if (r > 0.02) g += `<rect x="${Math.min(xa, xb)}" y="${y - 15}" width="${Math.abs(xb - xa)}" height="30" fill="#e5483f" opacity="${0.15 + 0.7 * r}"/>`;
+    if (r > 0.02) g += `<text x="${(xa + xb) / 2}" y="${y - 30}" text-anchor="middle" font-size="13" fill="#c8322b" font-weight="600">${pct(r)}</text>`;
+  }
+  const dir = lang === "ar" ? -1 : 1;
+  for (let k = 0; k < 5; k++) { const cx = X(k + 0.5); g += `<path d="M ${cx - 9 * dir} ${y - 6} L ${cx + 9 * dir} ${y} L ${cx - 9 * dir} ${y + 6}" fill="none" stroke="#fff" stroke-width="2.5" opacity=".85"/>`; }
+  if (a && a.status === "alert" && a.location && a.location.kind === "segment") {
+    const px = X(a.location.position_km);
+    g += `<circle cx="${px}" cy="${y}" r="13" fill="#c8322b" opacity=".25"><animate attributeName="r" values="10;22;10" dur="1.6s" repeatCount="indefinite"/></circle>`;
+    g += `<circle cx="${px}" cy="${y}" r="7" fill="#c8322b" stroke="#fff" stroke-width="2"/>`;
+    g += `<text x="${px}" y="${y + 40}" text-anchor="middle" font-size="12.5" fill="#c8322b" font-weight="600">km ${a.location.position_km.toFixed(2)}</text>`;
+  }
+  s.devices.forEach((d, i) => {
+    const cx = X(d.x_km), bad = a && a.status === "alert" && a.location && a.location.kind === "device" && a.location.device === d.id;
+    const col = bad ? "#c27803" : "#0f2a4a";
+    g += `<line x1="${cx}" y1="${y - 22}" x2="${cx}" y2="${y - 52}" stroke="${col}" stroke-width="3"/>`;
+    g += `<rect x="${cx - 26}" y="${y - 80}" width="52" height="30" rx="7" fill="${col}"/>`;
+    g += `<text x="${cx}" y="${y - 60}" text-anchor="middle" font-size="13" fill="#fff" font-weight="600">D${d.id}</text>`;
+    if (bad) g += `<circle cx="${cx + 24}" cy="${y - 80}" r="8" fill="#c27803" stroke="#fff" stroke-width="2"/><text x="${cx + 24}" y="${y - 76}" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">!</text>`;
+    if (d.latest) {
+      g += `<text x="${cx}" y="${y + 62}" text-anchor="middle" font-size="12" fill="#14213d">${d.latest.pressure.toFixed(2)} bar</text>`;
+      g += `<text x="${cx}" y="${y + 78}" text-anchor="middle" font-size="12" fill="#5b6b82">${d.latest.flow.toFixed(1)} m³/h</text>`;
+      g += `<text x="${cx}" y="${y + 94}" text-anchor="middle" font-size="11" fill="#5b6b82">pH ${d.latest.ph.toFixed(2)} · EC ${Math.round(d.latest.ec)}</text>`;
+    }
+    if (d.battery_pct != null) g += `<text x="${cx}" y="${y + 112}" text-anchor="middle" font-size="10.5" fill="#8a96a6">🔋${Math.round(d.battery_pct)}% ⚡${d.power_w.toFixed(1)}W</text>`;
+  });
+  $("pipe").innerHTML = g;
+}
+
+function drawChart(s) {
+  const c = $("chart"), dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+  c.width = w * dpr; c.height = h * dpr;
+  const ctx = c.getContext("2d"); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
+  const series = s.history[metric] || [];
+  if (!series.length || !series[0].length) return;
+  let lo = Infinity, hi = -Infinity;
+  series.forEach(r => r.forEach(v => { lo = Math.min(lo, v); hi = Math.max(hi, v); }));
+  const pad = (hi - lo) * 0.08 || 1; lo -= pad; hi += pad;
+  const L = 52, R = 12, Tp = 22, B = 24, n = series[0].length;
+  ctx.direction = "ltr"; ctx.textAlign = "left";
+  ctx.font = "11px system-ui"; ctx.fillStyle = "#5b6b82"; ctx.strokeStyle = "#e6ebf2"; ctx.lineWidth = 1;
+  for (let k = 0; k <= 4; k++) {
+    const yy = Tp + (h - Tp - B) * k / 4, v = hi - (hi - lo) * k / 4;
+    ctx.beginPath(); ctx.moveTo(L, yy); ctx.lineTo(w - R, yy); ctx.stroke();
+    ctx.fillText(v.toFixed(Math.abs(hi - lo) < 5 ? 2 : 0), 6, yy + 4);
+  }
+  const unit = (s.sensors.find(x => x.key === metric) || {}).unit || "";
+  ctx.fillText(unit, 6, 11);
+  ctx.textAlign = "right";
+  ctx.fillText(lang === "ar" ? "الأحدث ←" : "latest →", w - R, h - 6);
+  series.forEach((r, i) => {
+    ctx.strokeStyle = DEV_COLORS[i]; ctx.lineWidth = 1.6; ctx.beginPath();
+    r.forEach((v, k) => { const xx = L + (w - L - R) * k / Math.max(1, n - 1), yy = Tp + (h - Tp - B) * (hi - v) / (hi - lo); k ? ctx.lineTo(xx, yy) : ctx.moveTo(xx, yy); });
+    ctx.stroke();
+  });
+}
+
+function render(s) {
+  const t = T(), a = s.assessment;
+  $("modeChip").textContent = s.mode === "simulate" ? t.simMode : t.ingestMode;
+  $("clock").textContent = fmtTime(s.time);
+  $("demoCard").classList.toggle("hide", s.mode !== "simulate");
+  const banner = $("banner");
+  if (!a) {
+    banner.className = "warm"; $("bannerIcon").textContent = "…";
+    $("bannerTitle").textContent = t.warm; $("bannerMeta").textContent = t.warmMeta(s.warmup_remaining);
+    $("kpiConf").textContent = "—"; $("kpiSev").textContent = "—";
+  } else {
+    const confirmedAlert = a.status === "alert" && a.confirmed;
+    const cls = a.status === "normal" ? "normal" : (confirmedAlert ? "alert" : "watch");
+    banner.className = cls; $("bannerIcon").textContent = cls === "normal" ? "✓" : "!";
+    $("bannerTitle").textContent = a.headline[lang];
+    const fp = a.fault_probs[a.fault];
+    $("bannerMeta").textContent = a.status === "normal" ? t.devicesOk :
+      `${t.faults[a.fault]} · ${t.confidence} ${pct(a.confidence)} · ${t.severity}: ${t.levels[a.severity.level]}`;
+    $("kpiConf").textContent = a.status === "normal" ? pct(a.fault_probs.normal) : pct(a.confidence);
+    $("kpiSev").textContent = a.status === "normal" ? "—" : t.levels[a.severity.level];
+
+    const probs = Object.entries(a.fault_probs).sort((x, y) => y[1] - x[1]);
+    $("probs").innerHTML = probs.map(([k, v], i) => `<div class="bar ${i === 0 && k !== "normal" ? "top" : ""}"><span>${t.faults[k]}</span><div class="track"><div class="fill" style="width:${v * 100}%"></div></div><span>${pct(v)}</span></div>`).join("");
+
+    const loc = a.status === "alert" ? a.location : null;
+    if (loc && loc.kind === "segment") {
+      $("locMain").textContent = t.between(loc.between[0], loc.between[1]);
+      $("locSub").textContent = `${t.kmEst(loc.position_km.toFixed(2))} · ${t.confidence} ${pct(loc.confidence)}`;
+      $("segProbs").innerHTML = loc.segment_probs.map((p, j) => `<div class="bar ${j === loc.segment - 1 ? "top" : ""}"><span>${t.segLabel(j + 1, j + 2)}</span><div class="track"><div class="fill" style="width:${p * 100}%"></div></div><span>${pct(p)}</span></div>`).join("");
+    } else if (loc && loc.kind === "device") {
+      $("locMain").textContent = t.devLabel(loc.device);
+      $("locSub").textContent = `${t.sensorOn(t.sensors[loc.sensor], loc.device)} · ${t.confidence} ${pct(loc.confidence)}`;
+      $("segProbs").innerHTML = loc.device_probs.map((p, j) => `<div class="bar ${j === loc.device - 1 ? "top" : ""}"><span>${t.devLabel(j + 1)}</span><div class="track"><div class="fill" style="width:${p * 100}%"></div></div><span>${pct(p)}</span></div>`).join("");
+    } else { $("locMain").textContent = "—"; $("locSub").textContent = ""; $("segProbs").innerHTML = ""; }
+
+    const lvl = a.status === "normal" ? -1 : LEVELS.indexOf(a.severity.level);
+    $("sevMain").textContent = a.status === "normal" ? "—" : `${t.levels[a.severity.level]} (${pct(a.severity.score)})`;
+    [...$("sevBar").children].forEach((el, i) => el.classList.toggle("on", i <= lvl));
+    $("anomaly").textContent = `${a.anomaly_score.toFixed(3)} / ${a.anomaly_threshold.toFixed(3)}`;
+    $("loss").textContent = a.estimated_loss_m3h != null && a.status === "alert" ? `${a.estimated_loss_m3h.toFixed(1)} ${t.m3h}` : t.noLoss;
+    $("streak").textContent = a.status === "alert" ? t.confirming(Math.min(a.streak, 3), 3) : "—";
+
+    $("recs").innerHTML = a.recommendations.map(r => `<li><span class="prio ${r.priority === "24h" ? "h24" : r.priority}">${t.prio[r.priority]}</span><span>${r[lang]}</span></li>`).join("");
+  }
+  $("incidents").innerHTML = s.incidents.map(i => `<tr><td>${i.id}</td><td>${i.headline ? i.headline[lang] : t.faults[i.fault]}<div class="muted" style="font-size:12px">${t.confidence} ${pct(i.confidence)} · ${t.levels[i.severity.level]}</div></td><td>${fmtTime(i.start_ts)}</td><td><span class="chip" style="background:${i.status === "active" ? "var(--red-soft)" : "var(--green-soft)"};color:${i.status === "active" ? "var(--red)" : "var(--green)"}">${t[i.status]}</span></td></tr>`).join("") || `<tr><td colspan="4" class="muted">—</td></tr>`;
+
+  const g = s.ground_truth;
+  if (g) {
+    let txt = t.truthNone;
+    if (g.fault !== "normal") txt = t.truth(g.fault === "sensor_fault" ? t.sensorOn(t.sensors[g.sensor], g.device)
+      : `${t.faults[g.fault]} — ${t.between(g.between[0], g.between[1])}, km ${g.position_km.toFixed(2)}`);
+    $("truth").textContent = txt;
+  }
+  drawPipe(s); drawChart(s);
+}
+
+async function poll() {
+  try { const r = await fetch("/api/state"); if (r.ok) { S = await r.json(); render(S); } } catch (e) {}
+}
+applyLang();
+poll();
+setInterval(poll, 1000);
+window.addEventListener("resize", () => S && drawChart(S));
+</script>
+</body>
+</html>

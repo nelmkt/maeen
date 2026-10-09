@@ -1,0 +1,324 @@
+{
+  "window_test": {
+    "n": 3000,
+    "fault_type_accuracy": 0.941,
+    "fault_type_macro_f1": 0.9358213111546397,
+    "detection_rate": 0.9203624225083452,
+    "false_alarm_rate": 0.0033222591362126247,
+    "isolation_forest_detection_rate": 0.22937529804482595,
+    "isolation_forest_false_alarm_rate": 0.0022148394241417496,
+    "segment_accuracy": 0.9988200589970502,
+    "segment_within_1": 1.0,
+    "position_mae_km": 0.11071114326407086,
+    "segment_accuracy_by_fault": {
+      "leak": 0.9973082099596231,
+      "blockage": 1.0,
+      "contamination": 1.0,
+      "corrosion": 1.0
+    },
+    "sensor_fault_device_accuracy": 0.8761061946902655,
+    "sensor_fault_instrument_accuracy": 0.9911504424778761,
+    "severity_mae": 0.04012315574080324,
+    "severity_level_accuracy": 0.8823529411764706,
+    "per_class": {
+      "normal": {
+        "precision": 0.8437792329279701,
+        "recall": 0.9988925802879292,
+        "f1-score": 0.9148073022312373,
+        "support": 903.0
+      },
+      "leak": {
+        "precision": 1.0,
+        "recall": 0.9841059602649007,
+        "f1-score": 0.9919893190921228,
+        "support": 755.0
+      },
+      "blockage": {
+        "precision": 0.9912536443148688,
+        "recall": 0.9883720930232558,
+        "f1-score": 0.9898107714701602,
+        "support": 344.0
+      },
+      "contamination": {
+        "precision": 0.9875,
+        "recall": 0.9968454258675079,
+        "f1-score": 0.9921507064364207,
+        "support": 317.0
+      },
+      "corrosion": {
+        "precision": 1.0,
+        "recall": 0.9135802469135802,
+        "f1-score": 0.9548387096774194,
+        "support": 324.0
+      },
+      "sensor_fault": {
+        "precision": 0.9868995633187773,
+        "recall": 0.6330532212885154,
+        "f1-score": 0.7713310580204779,
+        "support": 357.0
+      },
+      "accuracy": 0.941,
+      "macro avg": {
+        "precision": 0.9682387400936028,
+        "recall": 0.9191415879409481,
+        "f1-score": 0.9358213111546397,
+        "support": 3000.0
+      },
+      "weighted avg": {
+        "precision": 0.949094848361025,
+        "recall": 0.941,
+        "f1-score": 0.9382541796014118,
+        "support": 3000.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        902,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        12,
+        743,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        340,
+        0,
+        0,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        316,
+        0,
+        1
+      ],
+      [
+        28,
+        0,
+        0,
+        0,
+        296,
+        0
+      ],
+      [
+        124,
+        0,
+        3,
+        4,
+        0,
+        226
+      ]
+    ]
+  },
+  "noisy_test": {
+    "n": 1500,
+    "fault_type_accuracy": 0.9346666666666666,
+    "fault_type_macro_f1": 0.9261895962715637,
+    "detection_rate": 0.933142311365807,
+    "false_alarm_rate": 0.05739514348785872,
+    "isolation_forest_detection_rate": 0.4059216809933142,
+    "isolation_forest_false_alarm_rate": 0.024282560706401765,
+    "segment_accuracy": 0.9907192575406032,
+    "segment_within_1": 1.0,
+    "position_mae_km": 0.1604746162183875,
+    "segment_accuracy_by_fault": {
+      "leak": 0.9787234042553191,
+      "blockage": 1.0,
+      "contamination": 1.0,
+      "corrosion": 1.0
+    },
+    "sensor_fault_device_accuracy": 0.7766990291262136,
+    "sensor_fault_instrument_accuracy": 0.9320388349514563,
+    "severity_mae": 0.05196962844724635,
+    "severity_level_accuracy": 0.8621761658031089,
+    "per_class": {
+      "normal": {
+        "precision": 0.860236220472441,
+        "recall": 0.9646799116997793,
+        "f1-score": 0.9094693028095734,
+        "support": 453.0
+      },
+      "leak": {
+        "precision": 0.9791666666666666,
+        "recall": 0.9791666666666666,
+        "f1-score": 0.9791666666666666,
+        "support": 384.0
+      },
+      "blockage": {
+        "precision": 0.9948717948717949,
+        "recall": 0.9897959183673469,
+        "f1-score": 0.9923273657289002,
+        "support": 196.0
+      },
+      "contamination": {
+        "precision": 1.0,
+        "recall": 0.9875776397515528,
+        "f1-score": 0.99375,
+        "support": 161.0
+      },
+      "corrosion": {
+        "precision": 0.9708029197080292,
+        "recall": 0.8986486486486487,
+        "f1-score": 0.9333333333333333,
+        "support": 148.0
+      },
+      "sensor_fault": {
+        "precision": 0.8803418803418803,
+        "recall": 0.6518987341772152,
+        "f1-score": 0.7490909090909091,
+        "support": 158.0
+      },
+      "accuracy": 0.9346666666666666,
+      "macro avg": {
+        "precision": 0.947569913676802,
+        "recall": 0.9119612532185349,
+        "f1-score": 0.9261895962715637,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.936303152586462,
+        "recall": 0.9346666666666666,
+        "f1-score": 0.9326461365501987,
+        "support": 1500.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        437,
+        4,
+        0,
+        0,
+        1,
+        11
+      ],
+      [
+        8,
+        376,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        194,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        159,
+        2,
+        0
+      ],
+      [
+        12,
+        0,
+        0,
+        0,
+        133,
+        3
+      ],
+      [
+        49,
+        4,
+        1,
+        0,
+        1,
+        103
+      ]
+    ]
+  },
+  "leak_size_sweep": [
+    {
+      "leak_pct_of_flow": "0\u20132%",
+      "n": 177,
+      "detected": 0.9322033898305084,
+      "diagnosed_as_leak": 0.9322033898305084,
+      "segment_correct": 0.9878787878787879
+    },
+    {
+      "leak_pct_of_flow": "2\u20135%",
+      "n": 223,
+      "detected": 1.0,
+      "diagnosed_as_leak": 1.0,
+      "segment_correct": 1.0
+    },
+    {
+      "leak_pct_of_flow": "5\u201310%",
+      "n": 196,
+      "detected": 1.0,
+      "diagnosed_as_leak": 1.0,
+      "segment_correct": 1.0
+    },
+    {
+      "leak_pct_of_flow": "10\u2013100%",
+      "n": 159,
+      "detected": 1.0,
+      "diagnosed_as_leak": 1.0,
+      "segment_correct": 1.0
+    }
+  ],
+  "streaming_test": {
+    "per_fault": [
+      {
+        "fault": "leak",
+        "runs": 40,
+        "detected": 1.0,
+        "median_delay_min": 5.0,
+        "type_correct_at_alert": 1.0,
+        "location_correct_at_alert": 0.975
+      },
+      {
+        "fault": "blockage",
+        "runs": 40,
+        "detected": 1.0,
+        "median_delay_min": 5.0,
+        "type_correct_at_alert": 0.975,
+        "location_correct_at_alert": 0.975
+      },
+      {
+        "fault": "contamination",
+        "runs": 40,
+        "detected": 1.0,
+        "median_delay_min": 6.0,
+        "type_correct_at_alert": 0.875,
+        "location_correct_at_alert": 0.9
+      },
+      {
+        "fault": "corrosion",
+        "runs": 40,
+        "detected": 1.0,
+        "median_delay_min": 11.0,
+        "type_correct_at_alert": 1.0,
+        "location_correct_at_alert": 1.0
+      },
+      {
+        "fault": "sensor_fault",
+        "runs": 40,
+        "detected": 0.95,
+        "median_delay_min": 10.0,
+        "type_correct_at_alert": 1.0,
+        "location_correct_at_alert": 0.9210526315789473
+      }
+    ],
+    "false_alarms_per_day": 0.05930807248764415,
+    "normal_minutes_observed": 24280
+  }
+}
