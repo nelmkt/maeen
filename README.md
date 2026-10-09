@@ -14,7 +14,7 @@ It turns raw in-pipe sensor streams into decisions: *what* is wrong, *where*, *h
 
 ![Maeen dashboard](docs/dashboard.jpg)
 
-*A leak injected at km 2.57 is reported as "احتمال تسريب بين الجهاز 3 والجهاز 4" ("possible leak between Device 3 and Device 4") at an estimated km 2.68, with 100% confidence and high severity. The alert comes with the evidence behind it, prioritised actions and an estimated loss.*
+*A leak injected at km 2.27 is reported as "احتمال تسريب بين الجهاز 3 والجهاز 4" ("possible leak between Device 3 and Device 4") at an estimated km 2.20, with 100% confidence and high severity. The alert comes with the evidence behind it, prioritised actions and an estimated loss.*
 
 ---
 
@@ -178,7 +178,7 @@ python -m maeen.evaluate               # full evaluation → reports/
 uvicorn app.main:app --port 8000       # dashboard at http://localhost:8000, API docs at /docs
 ```
 
-In the dashboard, the **Fault scenario simulator** injects a leak, blockage, contamination, corrosion or sensor fault anywhere on the line. The simulated ground truth is shown next to the AI's answer, so you can compare them.
+In the dashboard, the **Fault scenario simulator** injects a leak, blockage, contamination, corrosion or sensor fault anywhere on the line. The simulated ground truth is shown next to the model's answer, so you can compare them.
 
 **Real devices / ingest mode.** Each device posts its readings every minute:
 
@@ -198,7 +198,7 @@ python -m maeen.train --config configs/ci.json && python -m maeen.evaluate --con
 | API | |
 |---|---|
 | `POST /api/ingest` | device readings |
-| `GET /api/state` | readings, AI assessment (with evidence and recommendations), incidents, model health |
+| `GET /api/state` | readings, model assessment (with evidence and recommendations), incidents, model health |
 | `GET /api/model` | served model card, live drift and latency, registry history |
 | `GET /api/metrics` | headline evaluation metrics |
 | `POST /api/sim/inject`, `/api/sim/reset` | demo fault injection |
@@ -236,7 +236,7 @@ tests/           pytest suite
 
 ## ملخص بالعربي
 
-**مَعين** نظام ذكاء اصطناعي متكامل لمراقبة خطوط المياه. يجمع قراءات الحساسات (الضغط والتدفق وpH وEC والصوت والاهتزاز)، ثم يحللها ليكتشف المشكلة ويحدد نوعها ومكانها ومستوى خطورتها، ويوضح سبب قراره، ويقترح الإجراء المناسب.
+**مَعين** نظام متكامل لمراقبة خطوط المياه يعتمد على تعلّم الآلة. يجمع قراءات الحساسات (الضغط والتدفق وpH وEC والصوت والاهتزاز)، ثم يحللها ليكتشف المشكلة ويحدد نوعها ومكانها ومستوى خطورتها، ويوضح سبب قراره، ويقترح الإجراء المناسب.
 
 - **البيانات:** نبدأ بمحاكي فيزيائي للخط وللأعطال، لأن الحساسات الفعلية ما زالت قيد التطوير. والنظام نفسه يستقبل لاحقاً بيانات الأجهزة الحقيقية.
 - **النموذج:** خمسة نماذج تعمل معاً. الأول يكتشف أي سلوك غير طبيعي، والثاني يصنّف العطل، والثالث يحدد المقطع والموقع بالكيلومتر، والرابع يحدد الجهاز والحساس المعطل، والخامس يقدّر الخطورة. ومعها جزء يشرح الأدلة التي بنى عليها النظام قراره.

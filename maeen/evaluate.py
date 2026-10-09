@@ -1,4 +1,4 @@
-"""Measure how well the AI detects, diagnoses and locates faults:  python -m maeen.evaluate
+"""Measure how well the model detects, diagnoses and locates faults:  python -m maeen.evaluate
 
 All test data is generated with seeds never used in training. Four test suites:
   1. window test     3000 random 30-min windows (all fault types, random size/location/onset)
@@ -310,7 +310,7 @@ def write_markdown(m: dict, path: Path):
         delay = "-" if r["median_delay_min"] is None else f"{r['median_delay_min']:.0f} min"
         L.append(f"| {r['fault']} | {r['runs']} | {_pct(r['detected'])} | {delay} | {_pct(r['type_correct_at_alert'])} | {_pct(r['location_correct_at_alert'])} |")
     if m.get("baselines"):
-        L += ["", "## Baselines: what the AI adds", "",
+        L += ["", "## Baselines: what the ML adds", "",
               "Same test windows, three approaches. Threshold rules are calibrated on normal data (99.5th percentile).", "",
               "| Approach | Fault-type accuracy | Macro-F1 | Detection | False alarms | Correct segment |", "|---|---|---|---|---|---|"]
         for r in m["baselines"]:

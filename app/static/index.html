@@ -202,10 +202,10 @@
 <script>
 const I18N = {
   ar: {
-    title: "المراقبة الذكية لخطوط المياه", subtitle: "جمع البيانات ← تحليل بالذكاء الاصطناعي ← تحديد المشكلة ومكانها ← توصية بالإجراء",
+    title: "المراقبة الذكية لخطوط المياه", subtitle: "جمع البيانات ← تحليل بتعلّم الآلة ← تحديد المشكلة ومكانها ← توصية بالإجراء",
     confidence: "نسبة الثقة", severity: "مستوى الخطورة", pipeMap: "خريطة الخط ومكان المشكلة",
     legendFlow: "اتجاه التدفق", legendRisk: "احتمال وجود المشكلة في المقطع", legendEst: "الموقع التقديري", legendDevice: "جهاز به عطل حساس",
-    diagnosis: "تشخيص الذكاء الاصطناعي", location: "مكان المشكلة", severityImpact: "الخطورة والأثر",
+    diagnosis: "تشخيص نموذج تعلّم الآلة", location: "مكان المشكلة", severityImpact: "الخطورة والأثر",
     anomalyScore: "مؤشر الشذوذ", estLoss: "الفاقد المقدّر", verify: "دقائق التأكيد",
     recs: "الإجراءات المقترحة", incidents: "سجل الحوادث", event: "الحدث", start: "البداية", state: "الحالة",
     liveData: "القراءات الحية من الأجهزة (آخر ساعتين)", demo: "محاكاة سيناريو عطل (للعرض)",
@@ -230,10 +230,10 @@ const I18N = {
       false_alarms_per_day: "إنذارات كاذبة / يوم", median_delay_min: "زمن الاكتشاف (دقيقة)", position_mae_m: "خطأ الموقع (متر)" },
   },
   en: {
-    title: "AI for water-pipeline monitoring", subtitle: "Collect data → AI analysis → locate the problem → recommend action",
+    title: "ML for water-pipeline monitoring", subtitle: "Collect data → ML analysis → locate the problem → recommend action",
     confidence: "Confidence", severity: "Severity", pipeMap: "Pipeline map & problem location",
     legendFlow: "Flow direction", legendRisk: "Probability the problem is in the segment", legendEst: "Estimated position", legendDevice: "Device with faulty sensor",
-    diagnosis: "AI diagnosis", location: "Problem location", severityImpact: "Severity & impact",
+    diagnosis: "ML diagnosis", location: "Problem location", severityImpact: "Severity & impact",
     anomalyScore: "Anomaly score", estLoss: "Estimated loss", verify: "Confirmation minutes",
     recs: "Recommended actions", incidents: "Incident log", event: "Event", start: "Start", state: "State",
     liveData: "Live device readings (last 2 h)", demo: "Fault scenario simulator (demo)",
@@ -243,7 +243,7 @@ const I18N = {
     evidence: "Evidence - why the model decided this", modelVersion: "Model version", latency: "Inference latency", drift: "Input drift",
     driftStates: { ok: "OK", drift: "Drift - recalibration advised", busy: "not measurable during alert", warming_up: "-" },
     footer: "Prototype - simulated pressure, flow, pH, EC, acoustic and vibration sensors",
-    warm: "Collecting data", warmMeta: n => `The AI needs ${n} more minutes of readings before its first assessment`,
+    warm: "Collecting data", warmMeta: n => `The model needs ${n} more minutes of readings before its first assessment`,
     devicesOk: "All devices online", active: "active", resolved: "resolved", minutes: "min",
     between: (a, b) => `Between Device ${a} and Device ${b}`, kmEst: km => `Estimated at km ${km}`,
     devLabel: d => `Device ${d}`, segLabel: (a, b) => `Segment ${a}-${b}`, sensorOn: (s, d) => `${s} sensor - Device ${d}`,

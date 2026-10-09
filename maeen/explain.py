@@ -3,7 +3,7 @@
 Every feature is converted to a robust z-score against the distribution seen during
 normal operation (median / IQR of the training "normal" windows). The strongest
 deviations *at the predicted location* are turned into readable sentences, so the
-operator sees why the AI raised the alert ("flow lost between D3 and D4: +6.2% of
+operator sees why the model raised the alert ("flow lost between D3 and D4: +6.2% of
 inflow, acoustic at D4: +7 dB"), not just a probability.
 """
 from __future__ import annotations

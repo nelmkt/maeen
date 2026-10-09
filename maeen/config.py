@@ -20,7 +20,7 @@ SENSOR_UNITS = {
 # Sensors that can develop an instrument fault in the simulator.
 FAULTY_SENSORS = SENSORS[:4]
 
-WINDOW = 30  # minutes of readings the AI looks at for every decision
+WINDOW = 30  # minutes of readings the model looks at for every decision
 
 FAULT_TYPES = ("normal", "leak", "blockage", "contamination", "corrosion", "sensor_fault")
 PIPE_FAULTS = ("leak", "blockage", "contamination", "corrosion")

@@ -13,7 +13,7 @@ off-takes in the middle of every segment, and optional faults:
 * sensor_fault   a single instrument gets stuck, drifts, jumps or becomes noisy
 
 Normal operation includes daily demand cycles, a big customer switching on/off
-and pump pressure steps so the AI has to learn not to raise false alarms on them.
+and pump pressure steps so the model has to learn not to raise false alarms on them.
 """
 from __future__ import annotations
 
@@ -47,7 +47,7 @@ SENSOR_FAULT_MODES = ("stuck", "drift", "offset", "noise")
 
 @dataclass
 class Network:
-    """Fixed properties of the monitored pipeline (what the AI calibrates against)."""
+    """Fixed properties of the monitored pipeline (what the model calibrates against)."""
 
     roughness: np.ndarray  # per segment friction multiplier
     offtake: np.ndarray  # per segment metered customer off-take, fraction of demand

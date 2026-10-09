@@ -1,4 +1,4 @@
-"""The AI engine: anomaly detection, fault diagnosis, localisation, severity and evidence."""
+"""The ML engine: anomaly detection, fault diagnosis, localisation, severity and evidence."""
 from __future__ import annotations
 
 import os

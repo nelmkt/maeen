@@ -1,4 +1,4 @@
-"""Cloud service: ingests device readings, runs the AI every minute, serves the dashboard.
+"""Cloud service: ingests device readings, runs the ML model every minute, serves the dashboard.
 
 Run:  uvicorn app.main:app --port 8000
 
@@ -131,7 +131,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="Maeen", version="0.2.0", lifespan=lifespan,
-              description="AI service for water-pipeline monitoring: detect, diagnose, locate, rate and recommend.")
+              description="ML service for water-pipeline monitoring: detect, diagnose, locate, rate and recommend.")
 
 
 def hub() -> Hub:

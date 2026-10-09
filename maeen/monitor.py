@@ -1,4 +1,4 @@
-"""Streaming monitor: keeps the latest readings, runs the AI each minute, manages incidents."""
+"""Streaming monitor: keeps the latest readings, runs the model each minute, manages incidents."""
 from __future__ import annotations
 
 import time

@@ -1,4 +1,4 @@
-"""Decision support: turn an AI assessment into a headline and suggested actions (EN + AR)."""
+"""Decision support: turn a model assessment into a headline and suggested actions (EN + AR)."""
 from __future__ import annotations
 
 FAULT_NAMES = {
@@ -43,7 +43,7 @@ def recommend(a: dict) -> list[dict]:
     level = a["severity"]["level"]
     urgent = level in ("high", "critical")
     if status == "normal":
-        return [_r("monitor", "No action needed. The AI keeps re-assessing the line every minute.",
+        return [_r("monitor", "No action needed. The model keeps re-assessing the line every minute.",
                    "لا يلزم أي إجراء. يعيد النظام تقييم الخط كل دقيقة.")]
     if status == "watch":
         return [
@@ -60,7 +60,7 @@ def recommend(a: dict) -> list[dict]:
         recs += [
             _r("24h", f"Recalibrate or replace the {s_en} sensor on Device {d}.",
                f"معايرة أو استبدال حساس {s_ar} في الجهاز {d}."),
-            _r("immediate", f"Device {d} {s_en} readings are flagged as low-trust; the AI relies on neighbouring devices meanwhile.",
+            _r("immediate", f"Device {d} {s_en} readings are flagged as low-trust; the model relies on neighbouring devices meanwhile.",
                f"تم تعليم قراءات {s_ar} في الجهاز {d} كقراءات غير موثوقة، ويعتمد النظام على الأجهزة المجاورة مؤقتاً."),
             _r("scheduled", f"Check Device {d} power (UPS battery, micro-turbine) and wireless link during the visit.",
                f"فحص طاقة الجهاز {d} (بطارية UPS والتوربين) والاتصال اللاسلكي أثناء الزيارة."),

@@ -58,7 +58,7 @@ False alarms: **0.06 per day** of normal operation.
 | corrosion | 40 | 100.0% | 11 min | 100.0% | 100.0% |
 | sensor_fault | 40 | 95.0% | 10 min | 100.0% | 92.1% |
 
-## Baselines: what the AI adds
+## Baselines: what the ML adds
 
 Same test windows, three approaches. Threshold rules are calibrated on normal data (99.5th percentile).
 
