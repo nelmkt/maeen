@@ -1,0 +1,7 @@
+{
+  "name": "ci",
+  "data": {"n_train": 4000, "n_baseline": 400, "train_noise": [0.6, 2.2], "seed": 0},
+  "model": {"max_iter": 200, "learning_rate": 0.08, "l2_regularization": 1.0,
+            "iso_estimators": 200, "anomaly_quantile": 0.99},
+  "eval": {"n_test": 1200, "n_noisy": 600, "runs_per_fault": 15, "normal_runs": 30, "importance_samples": 0}
+}

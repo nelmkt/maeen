@@ -1,9 +1,9 @@
 import numpy as np
 
-from smartpipe.config import FAULT_TYPES
-from smartpipe.live import LiveSimulator
-from smartpipe.monitor import IncidentTracker, Monitor
-from smartpipe.recommend import recommend
+from maeen.config import FAULT_TYPES
+from maeen.live import LiveSimulator
+from maeen.monitor import IncidentTracker, Monitor
+from maeen.recommend import recommend
 
 
 def test_feature_names_match_columns(small_model):

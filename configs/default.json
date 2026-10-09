@@ -1,0 +1,7 @@
+{
+  "name": "default",
+  "data": {"n_train": 9000, "n_baseline": 800, "train_noise": [0.6, 2.2], "seed": 0},
+  "model": {"max_iter": 300, "learning_rate": 0.06, "l2_regularization": 1.0,
+            "iso_estimators": 300, "anomaly_quantile": 0.99},
+  "eval": {"n_test": 3000, "n_noisy": 1500, "runs_per_fault": 40, "normal_runs": 80, "importance_samples": 1000}
+}

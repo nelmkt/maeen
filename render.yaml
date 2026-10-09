@@ -1,10 +1,10 @@
 # One-click cloud deploy on Render (https://render.com): New → Blueprint → pick this repo
 services:
   - type: web
-    name: smart-pipe-ai
+    name: maeen
     runtime: docker
     plan: free
     healthCheckPath: /api/health
     envVars:
-      - key: SMARTPIPE_MODE
+      - key: MAEEN_MODE
         value: simulate

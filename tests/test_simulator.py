@@ -2,7 +2,7 @@ from dataclasses import replace
 
 import numpy as np
 
-from smartpipe.simulator import Network, Q0, _physical, base_scenario
+from maeen.simulator import Network, Q0, _physical, base_scenario
 
 NET = Network.default()
 T = np.arange(100.0, 110.0)

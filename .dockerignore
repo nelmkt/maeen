@@ -1,5 +1,7 @@
 .git
 .venv
 __pycache__
-models/*.joblib
+models/registry
+models/LATEST
+ci_registry
 tests/.tmp

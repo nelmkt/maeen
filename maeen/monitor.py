@@ -1,6 +1,7 @@
 """Streaming monitor: keeps the latest readings, runs the AI each minute, manages incidents."""
 from __future__ import annotations
 
+import time
 from collections import deque
 
 import numpy as np
@@ -61,6 +62,7 @@ class Monitor:
         self.times: deque = deque(maxlen=max(window, history))
         self.tracker = IncidentTracker(persistence)
         self.current: dict | None = None
+        self.recent: deque = deque(maxlen=60)  # last hour of (anomaly flag, input deviation, latency ms, status)
 
     def push(self, frame: np.ndarray, ts: float) -> dict | None:
         self.frames.append(np.asarray(frame, dtype=float))
@@ -68,10 +70,35 @@ class Monitor:
         if len(self.frames) < self.window:
             return None
         X = np.stack(list(self.frames)[-self.window:])[None]
+        t0 = time.perf_counter()
         a = self.ai.predict(X)[0]
+        latency = (time.perf_counter() - t0) * 1000
         a["ts"] = float(ts)
+        self.recent.append((a["anomaly"], a["input_deviation"], latency, a["status"]))
         self.current = self.tracker.update(a, ts)
         return self.current
+
+    def health(self) -> dict:
+        """Model-health / drift indicators over the last hour.
+
+        Outside active incidents the input should look like the training "normal" data:
+        median |z| of the features ~0.7 and ~1% of windows above the anomaly threshold.
+        Much higher values mean the field data has drifted away from the training data
+        (new site, sensor ageing, seasonal change) and the baseline should be re-learned.
+        """
+        quiet = [r for r in self.recent if r[3] != "alert"]
+        if not self.recent:
+            return {"status": "warming_up"}
+        lat = [r[2] for r in self.recent]
+        out = {"windows": len(self.recent), "latency_ms_p50": float(np.median(lat)), "latency_ms_max": float(np.max(lat))}
+        if len(quiet) >= 10:
+            out["anomaly_rate"] = float(np.mean([r[0] for r in quiet]))
+            out["input_deviation"] = float(np.median([r[1] for r in quiet]))
+            drift = out["anomaly_rate"] > 0.15 or out["input_deviation"] > 1.5
+            out["status"] = "drift" if drift else "ok"
+        else:
+            out["status"] = "busy"  # mostly alerts: drift is not measurable right now
+        return out
 
     @property
     def warmup_remaining(self) -> int:

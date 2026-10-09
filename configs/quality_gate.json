@@ -1,0 +1,11 @@
+{
+  "window_test.fault_type_accuracy": {"min": 0.87},
+  "window_test.detection_rate": {"min": 0.83},
+  "window_test.false_alarm_rate": {"max": 0.02},
+  "window_test.segment_accuracy": {"min": 0.95},
+  "window_test.position_mae_km": {"max": 0.2},
+  "noisy_test.fault_type_accuracy": {"min": 0.8},
+  "streaming_test.detection_rate": {"min": 0.9},
+  "streaming_test.false_alarms_per_day": {"max": 1.0},
+  "latency.batched_ms_per_window": {"max": 20}
+}

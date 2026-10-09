@@ -6,3 +6,6 @@ venv/
 models/*.joblib
 tests/.tmp/
 .env
+models/registry/*/model.joblib
+models/LATEST
+ci_registry/

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Smart Pipe AI</title>
+<title>Maeen · مَعين</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -18,6 +18,16 @@
          font-family: "IBM Plex Sans Arabic", "Segoe UI", system-ui, sans-serif; font-size: 15px; }
   header { display: flex; align-items: center; gap: 16px; padding: 14px 24px; background: #0f2a4a; color: #fff; flex-wrap: wrap; }
   header h1 { font-size: 19px; margin: 0; font-weight: 600; }
+  header .brand { font-size: 24px; font-weight: 700; color: #8fd0ff; }
+  header .brand-en { font-size: 14px; font-weight: 500; color: #a9c1de; letter-spacing: .5px; }
+  .ev { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 6px; font-size: 13px; }
+  .ev li { display: flex; gap: 8px; align-items: baseline; }
+  .ev .z { flex: none; font-variant-numeric: tabular-nums; font-size: 11.5px; color: var(--red); background: var(--red-soft); border-radius: 6px; padding: 1px 6px; direction: ltr; }
+  .ev-title { font-size: 12.5px; color: var(--muted); margin-top: 14px; font-weight: 600; }
+  .health { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 12px; font-size: 13px; }
+  .health div { border: 1px dashed var(--line); border-radius: 8px; padding: 7px 10px; }
+  .health b { display: block; font-size: 14px; }
+  footer .verse { display: block; font-size: 15px; color: var(--ink); margin-bottom: 4px; }
   header .sub { color: #a9c1de; font-size: 13px; }
   header .spacer { flex: 1; }
   .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 99px; font-size: 12.5px; font-weight: 500; }
@@ -90,7 +100,7 @@
 <body>
 <header>
   <div>
-    <h1 data-i18n="title"></h1>
+    <h1><span class="brand">مَعين</span> <span class="brand-en">Maeen</span> · <span data-i18n="title"></span></h1>
     <div class="sub" data-i18n="subtitle"></div>
   </div>
   <div class="spacer"></div>
@@ -127,6 +137,8 @@
     <div class="card">
       <h2 data-i18n="diagnosis"></h2>
       <div id="probs"></div>
+      <div class="ev-title" id="evTitle" data-i18n="evidence"></div>
+      <ul class="ev" id="evidence"></ul>
     </div>
     <div class="card">
       <h2 data-i18n="location"></h2>
@@ -181,15 +193,16 @@
       <h2 data-i18n="modelPerf"></h2>
       <div class="metrics" id="metrics"><span class="muted">—</span></div>
       <p class="muted" style="font-size:12.5px;margin:10px 0 0" data-i18n="perfNote"></p>
+      <div class="health" id="health"></div>
     </div>
   </section>
 </main>
-<footer data-i18n="footer"></footer>
+<footer><span class="verse">﴿ قُلْ أَرَأَيْتُمْ إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَاءٍ مَّعِينٍ ﴾ — الملك ٣٠</span><span data-i18n="footer"></span></footer>
 
 <script>
 const I18N = {
   ar: {
-    title: "منصة المراقبة الذكية لخطوط المياه", subtitle: "جمع البيانات ← تحليل بالذكاء الاصطناعي ← تحديد المشكلة ومكانها ← توصية بالإجراء",
+    title: "المراقبة الذكية لخطوط المياه", subtitle: "جمع البيانات ← تحليل بالذكاء الاصطناعي ← تحديد المشكلة ومكانها ← توصية بالإجراء",
     confidence: "نسبة الثقة", severity: "مستوى الخطورة", pipeMap: "خريطة الخط ومكان المشكلة",
     legendFlow: "اتجاه التدفق", legendRisk: "احتمال وجود المشكلة في المقطع", legendEst: "الموقع التقديري", legendDevice: "جهاز به عطل حساس",
     diagnosis: "تشخيص الذكاء الاصطناعي", location: "مكان المشكلة", severityImpact: "الخطورة والأثر",
@@ -199,6 +212,8 @@ const I18N = {
     faultType: "نوع العطل", segment: "المقطع", device: "الجهاز", sensor: "الحساس", size: "الحجم / الشدة",
     inject: "تشغيل السيناريو", reset: "إعادة للوضع الطبيعي", modelPerf: "دقة النموذج (اختبار على سيناريوهات جديدة)",
     perfNote: "تم القياس على بيانات محاكاة لم يرها النموذج أثناء التدريب. التفاصيل في reports/EVALUATION.md",
+    evidence: "الأدلة — لماذا قرر النموذج ذلك؟", modelVersion: "إصدار النموذج", latency: "زمن الاستدلال", drift: "انحراف البيانات",
+    driftStates: { ok: "طبيعي", drift: "يوجد انحراف — يُنصح بإعادة المعايرة", busy: "غير قابل للقياس أثناء التنبيه", warming_up: "—" },
     footer: "نموذج أولي — بيانات تجريبية محاكاة لحساسات الضغط والتدفق وpH وEC والصوت والاهتزاز",
     warm: "جاري تجميع البيانات", warmMeta: n => `يحتاج النظام ${n} دقيقة إضافية من القراءات قبل أول تحليل`,
     devicesOk: "جميع الأجهزة متصلة", active: "نشط", resolved: "تمت المعالجة", minutes: "دقيقة",
@@ -215,7 +230,7 @@ const I18N = {
       false_alarms_per_day: "إنذارات كاذبة / يوم", median_delay_min: "زمن الاكتشاف (دقيقة)", position_mae_m: "خطأ الموقع (متر)" },
   },
   en: {
-    title: "Smart Water-Pipe Monitoring", subtitle: "Collect data → AI analysis → locate the problem → recommend action",
+    title: "AI for water-pipeline monitoring", subtitle: "Collect data → AI analysis → locate the problem → recommend action",
     confidence: "Confidence", severity: "Severity", pipeMap: "Pipeline map & problem location",
     legendFlow: "Flow direction", legendRisk: "Probability the problem is in the segment", legendEst: "Estimated position", legendDevice: "Device with faulty sensor",
     diagnosis: "AI diagnosis", location: "Problem location", severityImpact: "Severity & impact",
@@ -225,6 +240,8 @@ const I18N = {
     faultType: "Fault type", segment: "Segment", device: "Device", sensor: "Sensor", size: "Size / intensity",
     inject: "Run scenario", reset: "Back to normal", modelPerf: "Model accuracy (tested on unseen scenarios)",
     perfNote: "Measured on simulated data never used in training. Details in reports/EVALUATION.md",
+    evidence: "Evidence — why the model decided this", modelVersion: "Model version", latency: "Inference latency", drift: "Input drift",
+    driftStates: { ok: "OK", drift: "Drift — recalibration advised", busy: "not measurable during alert", warming_up: "—" },
     footer: "Prototype — simulated pressure, flow, pH, EC, acoustic and vibration sensors",
     warm: "Collecting data", warmMeta: n => `The AI needs ${n} more minutes of readings before its first assessment`,
     devicesOk: "All devices online", active: "active", resolved: "resolved", minutes: "min",
@@ -420,6 +437,9 @@ function render(s) {
     $("loss").textContent = a.estimated_loss_m3h != null && a.status === "alert" ? `${a.estimated_loss_m3h.toFixed(1)} ${t.m3h}` : t.noLoss;
     $("streak").textContent = a.status === "alert" ? t.confirming(Math.min(a.streak, 3), 3) : "—";
 
+    const ev = a.evidence || [];
+    $("evTitle").classList.toggle("hide", !ev.length);
+    $("evidence").innerHTML = ev.map(e => `<li><span class="z">${e.z > 0 ? "+" : ""}${e.z.toFixed(1)}σ</span><span>${e[lang]}</span></li>`).join("");
     $("recs").innerHTML = a.recommendations.map(r => `<li><span class="prio ${r.priority === "24h" ? "h24" : r.priority}">${t.prio[r.priority]}</span><span>${r[lang]}</span></li>`).join("");
   }
   $("incidents").innerHTML = s.incidents.map(i => `<tr><td>${i.id}</td><td>${i.headline ? i.headline[lang] : t.faults[i.fault]}<div class="muted" style="font-size:12px">${t.confidence} ${pct(i.confidence)} · ${t.levels[i.severity.level]}</div></td><td>${fmtTime(i.start_ts)}</td><td><span class="chip" style="background:${i.status === "active" ? "var(--red-soft)" : "var(--green-soft)"};color:${i.status === "active" ? "var(--red)" : "var(--green)"}">${t[i.status]}</span></td></tr>`).join("") || `<tr><td colspan="4" class="muted">—</td></tr>`;
@@ -431,6 +451,12 @@ function render(s) {
       : `${t.faults[g.fault]} — ${t.between(g.between[0], g.between[1])}, km ${g.position_km.toFixed(2)}`);
     $("truth").textContent = txt;
   }
+  const h = s.model_health || {};
+  $("health").innerHTML = [
+    [t.modelVersion, s.model_version || "—"],
+    [t.latency, h.latency_ms_p50 != null ? `${Math.round(h.latency_ms_p50)} ms` : "—"],
+    [t.drift, (t.driftStates[h.status] || "—") + (h.anomaly_rate != null ? ` (${pct(h.anomaly_rate)})` : "")],
+  ].map(([k, v]) => `<div><span class="muted">${k}</span><b>${v}</b></div>`).join("");
   drawPipe(s); drawChart(s);
 }
 

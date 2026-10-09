@@ -1,149 +1,250 @@
-# Smart Pipe AI — intelligent water-pipeline monitoring prototype
+<div align="center">
 
-An end-to-end **AI/ML prototype** for the smart in-pipe monitoring device: sensor data (pressure, flow, pH, EC, acoustic, vibration) is sent to a cloud service, where AI models **detect abnormal behaviour, diagnose the fault, locate it between two devices, rate its severity and recommend what to do**.
+# مَعين · Maeen
 
-> The value of the project is not only the device and its sensors. It's how the system turns the data into a decision: what the problem is, where it is, how serious it is, and what to do next.
+**AI engineering for smart water-pipeline monitoring.**
+It turns raw in-pipe sensor streams into decisions: *what* is wrong, *where*, *how serious*, *why*, and *what to do*.
 
-![dashboard](docs/dashboard.jpg)
+﴿ قُلْ أَرَأَيْتُمْ إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَاءٍ مَّعِينٍ ﴾ (الملك: ٣٠)
+*"Say: Have you considered — if your water were to sink away, who could bring you flowing water?"*
 
-*Example: a leak injected at km 2.57 is detected as "possible leak between Device 3 and Device 4" (estimated km 2.63, 100% confidence, high severity), with prioritised actions and an estimated loss of ~17 m³/h.*
+</div>
+
+**Maeen** (مَعين) is the Quranic word for *flowing, pure water*. The verse it comes from describes the very problem this project fights: water that sinks away and is lost.
+
+![Maeen dashboard](docs/dashboard.jpg)
+
+*A leak injected at km 2.57 is reported as "احتمال تسريب بين الجهاز 3 والجهاز 4" ("possible leak between Device 3 and Device 4") at an estimated km 2.63, with 100% confidence and high severity. The alert comes with the evidence behind it, prioritised actions and an estimated loss.*
 
 ---
 
-## How it works
+## Results at a glance
+
+All results come from scenarios **never seen in training**. Full report: [reports/EVALUATION.md](reports/EVALUATION.md).
+
+| | Threshold rules<br>(classic SCADA) | Same ML on<br>raw readings | **Maeen**<br>(physics features + ML) |
+|---|---|---|---|
+| Fault-type accuracy (6 classes) | 78.5% | 88.6% | **94.1%** |
+| Macro-F1 | 76.9% | 86.0% | **93.6%** |
+| False alarms (normal windows flagged) | 28.8% | 0.9% | **0.3%** |
+| Correct segment (between which 2 devices) | 99.9% | 98.8% | **99.9%** |
+
+| Streaming (minute-by-minute) | |
+|---|---|
+| Detection delay, median | **5 min** leak · 5 blockage · 6 contamination · 11 corrosion · 10 sensor fault |
+| False alarms in live operation | **0.06 / day** (17 simulated days) |
+| Fault position error | **~110 m** on a 5 km line |
+| Robustness at 2× sensor noise | 93.5% fault-type accuracy |
+| Inference | ~0.6 ms per window batched, ~150 ms for one full decision (all models + evidence + recommendations) |
+
+---
+
+## 1. Problem framing
+
+| | |
+|---|---|
+| **Input** | A sliding window of the last **30 minutes** × **6 devices** × **6 signals**: pressure, flow, pH, EC, acoustic, vibration |
+| **Outputs (multi-task)** | anomaly score · fault type (6 classes) · faulty segment + km position · faulty device + instrument · severity 0–1 |
+| **Decision** | An alert is confirmed after 3 consistent minutes. The output is a headline, evidence, a confidence score, a severity level and prioritised recommendations |
+| **Constraints** | Very few false alarms (operators stop trusting noisy alarms), a location that a crew can act on, an explanation an operator can understand, and inference cheap enough to run every minute |
+
+## 2. System architecture
 
 ```mermaid
 flowchart LR
-    subgraph Field["Pipeline (5 km, 6 devices)"]
-        D1[D1] --- D2[D2] --- D3[D3] --- D4[D4] --- D5[D5] --- D6[D6]
+    subgraph Field["Pipeline: 6 devices, 5 km"]
+        D[D1 … D6]
     end
-    Field -- "readings every minute<br/>POST /api/ingest" --> API
-    subgraph Cloud["Cloud service (FastAPI)"]
-        API[Ingest] --> MON[Monitor<br/>30-min sliding window]
-        MON --> FE[Physics-aware features]
-        FE --> ISO[Anomaly detector<br/>IsolationForest]
+    D -- "POST /api/ingest<br/>every minute" --> ING
+    subgraph Serving["Inference service (FastAPI)"]
+        ING[Ingest + sync] --> WIN[30-min window]
+        WIN --> FE[Physics-aware<br/>feature extractor]
+        FE --> ISO[IsolationForest<br/>anomaly]
         FE --> CLF[Fault classifier]
-        FE --> LOC[Segment / device locator<br/>+ km estimate]
-        FE --> SEV[Severity model]
-        ISO & CLF & LOC & SEV --> DEC[Decision + incident logic]
-        DEC --> REC[Recommendation engine]
+        FE --> LOC[Segment / km<br/>Device / instrument]
+        FE --> SEV[Severity]
+        FE --> XAI[Evidence<br/>explainer]
+        ISO & CLF & LOC & SEV & XAI --> DEC[Incident logic] --> REC[Recommendations]
+        WIN --> MON[Drift + latency<br/>monitoring]
     end
-    REC --> DASH[Dashboard<br/>AR / EN]
+    REG[(Model registry<br/>+ model cards)] --> Serving
+    REC --> UI[Dashboard AR/EN]
+    subgraph Training["Training pipeline"]
+        SIM[Physics simulator] --> DS[Labelled windows] --> TR[train.py] --> EV[evaluate.py<br/>+ quality gate] --> REG
+    end
 ```
 
-| Step | What happens |
-|---|---|
-| **1. Data** | Each device reports pressure, flow, pH, EC, acoustic level and vibration (plus battery / micro-turbine power). Before the hardware is ready, a physics-based **simulator** generates realistic readings, including daily demand cycles, pump switching and sensor noise. |
-| **2. Features** | The AI compares **neighbouring devices** instead of looking at raw values. A leak shows up as flow disappearing between two meters plus louder noise near it. A blockage shows up as an extra pressure drop. Contamination shows up as an EC/pH front moving downstream. A faulty instrument disagrees with its neighbours. |
-| **3. Detect** | An IsolationForest learns what *normal* looks like (unsupervised) and scores how unusual each window is. |
-| **4. Diagnose** | A gradient-boosting classifier identifies **normal / leak / blockage / contamination / corrosion / sensor fault**. |
-| **5. Locate** | A second model predicts the **segment** ("between Device 3 and Device 4") and the **km position**. For sensor faults it predicts the **device and the instrument**. |
-| **6. Severity** | A regressor estimates a 0–1 severity, mapped to **low / medium / high / critical**. For leaks, it also estimates the water loss in m³/h. |
-| **7. Decide** | An alert is confirmed only after **3 consistent minutes**, which avoids false alarms from transients. Alerts are grouped into incidents (active / resolved). |
-| **8. Recommend** | Rule-based decision support turns the diagnosis into prioritised actions (immediate / 24 h / scheduled / monitor), in Arabic and English. Examples: isolate the segment, send a crew with an acoustic correlator to km X, lower inlet pressure, take water samples, schedule maintenance. |
+## 3. Data: simulation first
 
-## Measured accuracy
+The real devices are still being built, so Maeen starts from a **physics-based simulator** ([maeen/simulator.py](maeen/simulator.py)). The same API later accepts real readings.
 
-The models are tested on **simulated scenarios never seen in training**: random fault types, sizes, locations and start times. The full report is in [reports/EVALUATION.md](reports/EVALUATION.md).
+- **Hydraulics** on a 10 m grid: friction loss ∝ Q², a source/pump curve, pressure-dependent customer demand, and metered off-takes in every segment
+- **Faults:**
+  - *leak*: flow ∝ √P, plus acoustic noise that fades with distance
+  - *blockage*: extra local head loss
+  - *contamination*: an EC/pH front carried downstream at the water's speed
+  - *corrosion*: slow EC rise and pH drop, pitting noise, a micro-leak
+  - *sensor fault*: stuck, drift, offset or noisy
+- **Domain randomisation**, so the model can't memorise one scenario:
+  - sensor noise from 0.6× to 2.2×
+  - daily demand cycles
+  - pump steps and big consumers switching on and off (benign transients that must *not* raise alarms)
+  - random fault size (log-uniform leaks from 1% to 25% of flow), random location, start time and ramp speed
+- **No leakage:** training, test, noisy-test and streaming-test data come from separate random seeds.
 
-| Metric | Result |
-|---|---|
-| Fault-type accuracy (6 classes) | **94.1%** (93.5% with 2× sensor noise) |
-| Correct segment for pipe faults | **99.9%** |
-| Position error (leak / blockage / contamination) | **~110 m** average |
-| Correct device for sensor faults | 87.6% |
-| Correct severity level | 88.2% |
-| False alarms (live streaming test, 17 days of normal operation) | **0.06 per day** |
-| Detection delay after a fault starts (median) | **5 min** leak · 5 blockage · 6 contamination · 11 corrosion · 10 sensor fault |
-| Leaks smaller than 2% of the pipe flow | 93% detected, 99% in the right segment |
+## 4. Features: let the physics do half the work
+
+Every feature compares neighbouring devices or compares a value to the **baseline learned during commissioning**, so each device's calibration offset cancels out ([maeen/features.py](maeen/features.py)).
+
+| Family | Physical meaning | Catches |
+|---|---|---|
+| `flow_loss[Sj]` | flow entering minus flow leaving a segment (mass balance) | leaks |
+| `friction[Sj]` | pressure drop ÷ flow² in a segment | blockages |
+| `dec`, `dph[Sj]` | EC / pH change from one device to the next | contamination, corrosion |
+| `acoustic`, `vibration[Di]` | noise above the flow-explained level | leaks, turbulence |
+| `p_resid[Di]` | pressure that disagrees with neighbouring devices | localisation, bad sensors |
+| `rel_noise`, `jump[Di.s]` | a signal noisier, frozen or shifted compared with the same sensor elsewhere | sensor faults |
+| `change_*`, `slope_*` | how things moved during the window | onset speed (sudden contamination vs slow corrosion) |
+
+The ablation in the baseline table above shows the value of this design: the same gradient-boosting model reaches 88.6% on raw readings and 94.1% on these features, with a third of the false alarms.
+
+## 5. Models
+
+| Model | Algorithm | Why |
+|---|---|---|
+| Anomaly detector | IsolationForest trained on normal data only; threshold at the 99th percentile of held-out normal windows | catches patterns that match *no* known fault type |
+| Fault classifier | HistGradientBoosting, 6 classes | strong on tabular features, fast, gives probabilities |
+| Segment locator + km regressor | HistGradientBoosting | "between Device 3 and Device 4, about km 2.6" |
+| Device + instrument locator | HistGradientBoosting | "pH sensor on Device 5" |
+| Severity regressor | HistGradientBoosting → low / medium / high / critical | ranks the response |
+| Evidence explainer | robust z-scores against normal operation, filtered to the predicted location | says *why* in plain Arabic and English |
+
+**Confidence** = P(fault type) × P(location). An incident opens after **3 consistent minutes** and resolves after 3 normal ones.
+
+## 6. Evaluation methodology
+
+`python -m maeen.evaluate` runs these suites ([maeen/evaluate.py](maeen/evaluate.py)):
+
+1. **Window test.** 3,000 random windows: accuracy, macro-F1, per-class precision and recall, confusion matrix, segment and position error, severity.
+2. **Robustness test.** 2× sensor noise.
+3. **Leak-size sweep.** Detection and localisation versus leak size. The model catches 93% of leaks under 2% of the flow.
+4. **Streaming test.** 200 fault runs and 17 days of normal operation, fed minute by minute through the real incident logic: detection delay, false alarms per day, and whether the diagnosis is correct *at the moment of the alert*.
+5. **Baselines and ablation.** Threshold rules and raw-feature ML on the same windows.
+6. **Feature importance.** Permutation importance of the fault classifier.
+7. **Latency.** Time for one decision, and per window when batched.
 
 <p>
-  <img src="reports/confusion_matrix.png" width="48%">
-  <img src="reports/leak_size_sweep.png" width="48%">
+  <img src="reports/confusion_matrix.png" width="32%">
+  <img src="reports/leak_size_sweep.png" width="32%">
+  <img src="reports/feature_importance.png" width="32%">
 </p>
 
-Known weak spots, which are also shown in the report: sensor faults that have barely started (a slow drift in its first minutes) are often missed, and contamination can be confused with corrosion right at the start.
+**Known weak spots** (see the report):
+- Sensor faults in their first minutes (a slow drift) are often missed. The streaming test catches 95% of them within about 10 minutes.
+- Contamination is sometimes taken for another fault type right at its onset.
 
-> ⚠️ All numbers are on **simulated** data. They show the approach works and where it struggles. They must be re-measured on real field data before any real-world claim.
+## 7. Explainability
+
+Each alert comes with **evidence**: the measured signals at the predicted location that deviate most from normal operation. For example:
+
+```
+Possible leak between Device 3 and Device 4
+  +36σ  Acoustic level at D4: +11.3 dB vs normal
+  +33σ  Acoustic level at D3: +10.6 dB vs normal
+  +26σ  Flow lost between D3 and D4: +11.0% of inflow vs normal
+```
+
+The operator can check the reasoning against what they know about the pipe, instead of trusting a bare probability.
+
+## 8. MLOps
+
+| Practice | Where |
+|---|---|
+| **Config-driven experiments** (data size, noise range, hyper-parameters, evaluation size) | [configs/default.json](configs/default.json), [configs/ci.json](configs/ci.json) |
+| **Model registry**: versioned models with a model card (config, git commit, class counts, feature hash, training time) and their metrics | [maeen/registry.py](maeen/registry.py) → `models/registry/<version>/` |
+| **Quality gate in CI**: every push retrains from scratch and fails if accuracy, false alarms, detection or latency regress | [configs/quality_gate.json](configs/quality_gate.json), [.github/workflows/ci.yml](.github/workflows/ci.yml) |
+| **Drift monitoring**: live anomaly rate and input deviation measured outside alerts; flags when field data no longer looks like the training data | `Monitor.health()`, `GET /api/model` |
+| **Serving**: FastAPI with typed input validation, a per-minute inference loop, and incident state | [app/main.py](app/main.py) |
+| **Reproducibility**: seeded simulation and training, and a Docker image that trains at build time | [Dockerfile](Dockerfile), [render.yaml](render.yaml) |
+| **Tests**: physics sanity checks, model output schema, incident logic, registry, explainer, baselines, gate, API | [tests/](tests) |
+| **Model card** | [MODEL_CARD.md](MODEL_CARD.md) |
 
 ## Run it
 
 ```bash
 pip install -r requirements-dev.txt
-python -m smartpipe.train          # simulate data + train all models (~2 min)
-python -m smartpipe.evaluate       # test on unseen scenarios → reports/
-uvicorn app.main:app --port 8000   # open http://localhost:8000
+python -m maeen.train                  # simulate + train + register (~2 min)
+python -m maeen.evaluate               # full evaluation → reports/
+uvicorn app.main:app --port 8000       # dashboard at http://localhost:8000, API docs at /docs
 ```
 
-In the dashboard, use **Fault scenario simulator** to inject a leak, blockage, contamination, corrosion or sensor fault anywhere on the line. Then watch the AI detect it, locate it and recommend actions. The simulated ground truth is shown next to it for comparison.
+In the dashboard, the **Fault scenario simulator** injects a leak, blockage, contamination, corrosion or sensor fault anywhere on the line. The simulated ground truth is shown next to the AI's answer, so you can compare them.
 
-### Send data from "devices" (ingest mode)
+**Real devices / ingest mode.** Each device posts its readings every minute:
 
 ```bash
-SMARTPIPE_MODE=ingest uvicorn app.main:app --port 8000
+MAEEN_MODE=ingest uvicorn app.main:app --port 8000
 python scripts/device_client.py --url http://localhost:8000 --fault leak --segment 3 --at 45
 ```
 
-`device_client.py` does what a real device (ESP32 / Raspberry Pi) would do: it posts one reading per device per minute to `POST /api/ingest`:
-
-```json
-{"readings": [{"device_id": 3, "ts": 1234, "pressure_bar": 3.9, "flow_m3h": 108.2, "ph": 7.41,
-               "ec_us_cm": 452, "acoustic_db": 39.1, "vibration_mm_s": 0.61, "battery_pct": 97}]}
-```
-
-### Deploy to the cloud
-
-The repo includes a `Dockerfile`, which trains the models at build time, and a `render.yaml` for a one-click deploy on [Render](https://render.com) (New → Blueprint → this repo). The same Docker image runs on any cloud: Azure, AWS, GCP, Railway.
+**Run the CI quality gate locally:**
 
 ```bash
-docker build -t smart-pipe-ai . && docker run -p 8000:8000 smart-pipe-ai
+python -m maeen.train --config configs/ci.json && python -m maeen.evaluate --config configs/ci.json --gate configs/quality_gate.json
 ```
 
-## API
+**Deploy:** `docker build -t maeen . && docker run -p 8000:8000 maeen`. On Render, use New → Blueprint and pick this repo.
 
-| Endpoint | Purpose |
+| API | |
 |---|---|
-| `POST /api/ingest` | device readings (ingest mode) |
-| `GET /api/state` | latest readings, 2 h history, AI assessment, incidents |
-| `POST /api/sim/inject` · `POST /api/sim/reset` | demo fault injection (simulate mode) |
-| `GET /api/metrics` | headline accuracy from the evaluation |
-| `GET /docs` | interactive API docs |
+| `POST /api/ingest` | device readings |
+| `GET /api/state` | readings, AI assessment (with evidence and recommendations), incidents, model health |
+| `GET /api/model` | served model card, live drift and latency, registry history |
+| `GET /api/metrics` | headline evaluation metrics |
+| `POST /api/sim/inject`, `/api/sim/reset` | demo fault injection |
 
 ## Project layout
 
 ```
-smartpipe/
-  simulator.py   physics-based pipeline + sensors + fault injection
-  data.py        synthetic dataset generation
-  features.py    neighbour-comparison features
-  models.py      PipeAI: anomaly detector, classifier, locator, severity
-  recommend.py   headline + recommended actions (EN/AR)
-  monitor.py     streaming window + incident logic
-  live.py        live device emulator for the demo
+maeen/
+  simulator.py   physics-based pipeline, sensors and fault injection
+  data.py        labelled dataset generation (domain randomisation)
+  features.py    physics-aware, baseline-relative features
+  models.py      PipeAI: anomaly, fault, location, severity models
+  explain.py     per-alert evidence (EN/AR)
+  recommend.py   decision support (EN/AR)
+  baselines.py   threshold rules + raw-feature model
+  monitor.py     streaming window, incident logic, drift and latency health
+  registry.py    versioned models + model cards
   train.py / evaluate.py
-app/             FastAPI service + dashboard (static/index.html)
-scripts/         device_client.py
-reports/         evaluation results (generated)
+configs/         experiment configs + quality gate
+app/             FastAPI service + dashboard
+scripts/         device_client.py (device emulator)
+reports/         evaluation report and figures
 tests/           pytest suite
 ```
 
-## Next steps
+## Roadmap: from simulation to the field
 
-- Connect the real device prototype (ESP32 + sensors) to `/api/ingest`, or via MQTT.
-- Collect a few weeks of real data, re-learn the normal baseline for the site, and re-measure accuracy.
-- Add pressure-transient analysis for sharper leak positioning, and connect to GIS maps of the network.
-- Feed back crew findings ("leak confirmed at km 2.6") to retrain the models.
+1. **Sim-to-real.** Run the device prototype on a test rig, re-learn the commissioning baseline, and measure the gap between simulated and real data.
+2. **Labelling loop.** Crew findings ("leak confirmed at km 2.6") flow back as labels, and the model is fine-tuned on real plus simulated data.
+3. **Model comparison.** Benchmark sequence models (1D-CNN, temporal transformers) against the current feature-based gradient boosting, under the same quality gate.
+4. **Probability calibration** and conformal location intervals ("km 2.4–2.8 with 90% coverage").
+5. **Edge inference.** Run the anomaly detector on the device itself and send only alerts when the connection is poor. MQTT ingestion.
 
 ---
 
 ## ملخص بالعربي
 
-نموذج أولي لنظام ذكي متكامل لمراقبة خطوط المياه:
+**مَعين** نظام ذكاء اصطناعي متكامل لمراقبة خطوط المياه. يجمع قراءات الحساسات (الضغط والتدفق وpH وEC والصوت والاهتزاز)، ثم يحللها ليكتشف المشكلة ويحدد نوعها ومكانها ومستوى خطورتها، ويوضح سبب قراره، ويقترح الإجراء المناسب.
 
-1. **جمع البيانات:** الأجهزة على الخط (كل كيلومتر) ترسل قراءات الضغط والتدفق وpH وEC والصوت والاهتزاز إلى الكلاود كل دقيقة. حالياً نستخدم بيانات تجريبية من محاكي فيزيائي إلى أن تكتمل الحساسات الفعلية.
-2. **التحليل بالذكاء الاصطناعي:** يقارن النظام بين الأجهزة المتجاورة لاكتشاف أي تغير غير طبيعي، ويحدد نوع المشكلة: تسريب، انسداد، تلوث، تآكل، أو عطل في أحد الحساسات.
-3. **تحديد المكان:** مثلاً «احتمال تسريب بين الجهاز 3 والجهاز 4» مع الموقع التقديري بالكيلومتر، ونسبة الثقة، ومستوى الخطورة.
-4. **التوصيات:** إجراءات مقترحة حسب الأولوية، مثل عزل المقطع، وإرسال فريق صيانة إلى الكيلومتر المحدد، وخفض الضغط، وأخذ عينات مياه، أو جدولة صيانة.
-5. **قياس الدقة:** اختبرنا النموذج على سيناريوهات أعطال جديدة لم يرها أثناء التدريب. الدقة في تحديد نوع العطل 94٪، وفي تحديد المقطع الصحيح 99.9٪، مع 0.06 إنذار كاذب في اليوم، ويتم اكتشاف التسريب خلال 5 دقائق تقريباً. التفاصيل في [reports/EVALUATION.md](reports/EVALUATION.md).
+- **البيانات:** نبدأ بمحاكي فيزيائي للخط وللأعطال، لأن الحساسات الفعلية ما زالت قيد التطوير. والنظام نفسه يستقبل لاحقاً بيانات الأجهزة الحقيقية.
+- **النموذج:** خمسة نماذج تعمل معاً. الأول يكتشف أي سلوك غير طبيعي، والثاني يصنّف العطل، والثالث يحدد المقطع والموقع بالكيلومتر، والرابع يحدد الجهاز والحساس المعطل، والخامس يقدّر الخطورة. ومعها جزء يشرح الأدلة التي بنى عليها النظام قراره.
+- **قياس الدقة:** اختبرنا النظام على سيناريوهات جديدة لم يرها أثناء التدريب:
+  - تحديد نوع العطل بدقة 94٪، مقابل 78.5٪ بطريقة العتبات التقليدية
+  - تحديد المقطع الصحيح بدقة 99.9٪
+  - 0.06 إنذار كاذب في اليوم
+  - اكتشاف التسريب خلال 5 دقائق تقريباً
+- **هندسة الذكاء الاصطناعي:** تجارب تُدار بملفات إعداد، وسجل لإصدارات النماذج مع بطاقة لكل نموذج، واختبار جودة تلقائي يمنع أي تحديث يُضعف دقة النموذج، ومراقبة لانحراف البيانات أثناء التشغيل.
 
 > جميع النتائج على بيانات محاكاة، ويجب إعادة قياسها على بيانات حقيقية من الميدان.

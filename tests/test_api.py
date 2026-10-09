@@ -7,13 +7,11 @@ from fastapi.testclient import TestClient
 @pytest.fixture
 def client(small_model, monkeypatch):
     _, path = small_model
-    monkeypatch.setenv("SMARTPIPE_MODE", "ingest")
-    monkeypatch.setenv("SMARTPIPE_MODEL_PATH", str(path))
-    import smartpipe.models
+    monkeypatch.setenv("MAEEN_MODE", "ingest")
+    monkeypatch.setenv("MAEEN_MODEL_PATH", str(path))
     import app.main
 
-    importlib.reload(smartpipe.models)
-    main = importlib.reload(app.main)
+    main = importlib.reload(app.main)  # MAEEN_MODE is read at import time
     with TestClient(main.app) as c:
         yield c
 
@@ -24,7 +22,7 @@ def readings(ts, frame):
 
 
 def test_ingest_to_assessment(client):
-    from smartpipe.live import LiveSimulator
+    from maeen.live import LiveSimulator
 
     sim = LiveSimulator(seed=1)
     assert client.get("/api/health").json()["mode"] == "ingest"
@@ -36,10 +34,12 @@ def test_ingest_to_assessment(client):
     assert state["assessment"]["status"] in ("normal", "watch", "alert")
     assert len(state["history"]["pressure"]) == 6
     assert client.get("/").status_code == 200
+    info = client.get("/api/model").json()
+    assert info["served"]["n_features"] > 100 and info["health"]["latency_ms_p50"] > 0
 
 
 def test_partial_cycle_waits_for_all_devices(client):
-    from smartpipe.live import LiveSimulator
+    from maeen.live import LiveSimulator
 
     ts, frame, _ = LiveSimulator(seed=2).tick()
     r = client.post("/api/ingest", json={"readings": readings(ts, frame)[:3]})

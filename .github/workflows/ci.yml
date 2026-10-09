@@ -1,12 +1,33 @@
-name: tests
+name: ci
 on: [push, pull_request]
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
       - run: pip install -r requirements-dev.txt
       - run: pytest -q
+
+  model-quality-gate:
+    # retrain from scratch and block the merge if accuracy, false alarms or latency regress
+    runs-on: ubuntu-latest
+    env:
+      MAEEN_REGISTRY: ci_registry/registry
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: python -m maeen.train --config configs/ci.json
+      - run: python -m maeen.evaluate --config configs/ci.json --gate configs/quality_gate.json --no-baselines
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: model-evaluation
+          path: ci_registry/registry/*/EVALUATION.md

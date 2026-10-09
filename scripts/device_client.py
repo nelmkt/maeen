@@ -3,7 +3,7 @@
 This is what a real device (ESP32 / Raspberry Pi with the sensors) would do every minute.
 Start the server in ingest mode first:
 
-    SMARTPIPE_MODE=ingest uvicorn app.main:app --port 8000
+    MAEEN_MODE=ingest uvicorn app.main:app --port 8000
     python scripts/device_client.py --url http://localhost:8000 --fault leak --segment 3 --at 45
 """
 from __future__ import annotations
@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from smartpipe.live import LiveSimulator  # noqa: E402
+from maeen.live import LiveSimulator  # noqa: E402
 
 
 def post(url: str, payload: dict) -> dict:
