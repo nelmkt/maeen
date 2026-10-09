@@ -5,7 +5,7 @@
 **Real-time detection, location and explanation of leaks and water-quality problems in water pipelines.**
 It turns raw in-pipe sensor streams into decisions: *what* is wrong, *where*, *how serious*, *why*, and *what to do*.
 
-Designed and built by **[Nelly Almaktoum](https://github.com/nelmkt)**, technical lead and sole developer.
+Designed and built by **[Nelly Almaktoum](https://github.com/nelmkt)**, technical lead and developer.
 
 ﴿ قُلْ أَرَأَيْتُمْ إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَاءٍ مَّعِينٍ ﴾ (الملك: ٣٠)
 *"Say: Have you considered: if your water were to sink away, who could bring you flowing water?"*
