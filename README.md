@@ -14,7 +14,7 @@ It turns raw in-pipe sensor streams into decisions: *what* is wrong, *where*, *h
 
 ![Maeen dashboard](docs/dashboard.jpg)
 
-*A leak injected at km 2.57 is reported as "احتمال تسريب بين الجهاز 3 والجهاز 4" ("possible leak between Device 3 and Device 4") at an estimated km 2.63, with 100% confidence and high severity. The alert comes with the evidence behind it, prioritised actions and an estimated loss.*
+*A leak injected at km 2.57 is reported as "احتمال تسريب بين الجهاز 3 والجهاز 4" ("possible leak between Device 3 and Device 4") at an estimated km 2.68, with 100% confidence and high severity. The alert comes with the evidence behind it, prioritised actions and an estimated loss.*
 
 ---
 

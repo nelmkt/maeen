@@ -1,0 +1,44 @@
+{
+  "version": "v20261009-134848",
+  "created_utc": "2026-10-09T13:48:48+00:00",
+  "git_commit": "1a7ff0c",
+  "config": {
+    "name": "default",
+    "data": {
+      "n_train": 9000,
+      "n_baseline": 800,
+      "train_noise": [
+        0.6,
+        2.2
+      ],
+      "seed": 0
+    },
+    "model": {
+      "max_iter": 300,
+      "learning_rate": 0.06,
+      "l2_regularization": 1.0,
+      "iso_estimators": 300,
+      "anomaly_quantile": 0.99
+    },
+    "eval": {
+      "n_test": 3000,
+      "n_noisy": 1500,
+      "runs_per_fault": 40,
+      "normal_runs": 80,
+      "importance_samples": 1000
+    }
+  },
+  "training_windows": 9000,
+  "class_counts": {
+    "normal": 2739,
+    "leak": 2236,
+    "blockage": 1027,
+    "sensor_fault": 1023,
+    "corrosion": 1022,
+    "contamination": 953
+  },
+  "n_features": 165,
+  "feature_hash": "388fc3bdcb",
+  "simulation_seconds": 43.8,
+  "training_seconds": 73.5
+}
