@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Maeen · مَعين</title>
+<title>Maeen - مَعين</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -100,7 +100,7 @@
 <body>
 <header>
   <div>
-    <h1><span class="brand">مَعين</span> <span class="brand-en">Maeen</span> · <span data-i18n="title"></span></h1>
+    <h1><span class="brand">مَعين</span> <span class="brand-en">Maeen</span> - <span data-i18n="title"></span></h1>
     <div class="sub" data-i18n="subtitle"></div>
   </div>
   <div class="spacer"></div>
@@ -117,8 +117,8 @@
       <div class="meta" id="bannerMeta"></div>
     </div>
     <div class="kpis">
-      <div class="kpi"><div class="v" id="kpiConf">—</div><div class="l" data-i18n="confidence"></div></div>
-      <div class="kpi"><div class="v" id="kpiSev">—</div><div class="l" data-i18n="severity"></div></div>
+      <div class="kpi"><div class="v" id="kpiConf">-</div><div class="l" data-i18n="confidence"></div></div>
+      <div class="kpi"><div class="v" id="kpiSev">-</div><div class="l" data-i18n="severity"></div></div>
     </div>
   </section>
 
@@ -142,17 +142,17 @@
     </div>
     <div class="card">
       <h2 data-i18n="location"></h2>
-      <div class="big" id="locMain">—</div>
+      <div class="big" id="locMain">-</div>
       <div class="muted" id="locSub"></div>
       <div id="segProbs" style="margin-top:10px"></div>
     </div>
     <div class="card">
       <h2 data-i18n="severityImpact"></h2>
-      <div class="big" id="sevMain">—</div>
+      <div class="big" id="sevMain">-</div>
       <div class="sev" id="sevBar"><div class="low"></div><div class="medium"></div><div class="high"></div><div class="critical"></div></div>
-      <div class="stat"><span data-i18n="anomalyScore"></span><b id="anomaly">—</b></div>
-      <div class="stat"><span data-i18n="estLoss"></span><b id="loss">—</b></div>
-      <div class="stat"><span data-i18n="verify"></span><b id="streak">—</b></div>
+      <div class="stat"><span data-i18n="anomalyScore"></span><b id="anomaly">-</b></div>
+      <div class="stat"><span data-i18n="estLoss"></span><b id="loss">-</b></div>
+      <div class="stat"><span data-i18n="verify"></span><b id="streak">-</b></div>
     </div>
   </section>
 
@@ -191,13 +191,13 @@
     </div>
     <div class="card">
       <h2 data-i18n="modelPerf"></h2>
-      <div class="metrics" id="metrics"><span class="muted">—</span></div>
+      <div class="metrics" id="metrics"><span class="muted">-</span></div>
       <p class="muted" style="font-size:12.5px;margin:10px 0 0" data-i18n="perfNote"></p>
       <div class="health" id="health"></div>
     </div>
   </section>
 </main>
-<footer><span class="verse">﴿ قُلْ أَرَأَيْتُمْ إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَاءٍ مَّعِينٍ ﴾ — الملك ٣٠</span><span data-i18n="footer"></span></footer>
+<footer><span class="verse">﴿ قُلْ أَرَأَيْتُمْ إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَاءٍ مَّعِينٍ ﴾ - الملك ٣٠</span><span data-i18n="footer"></span></footer>
 
 <script>
 const I18N = {
@@ -212,15 +212,15 @@ const I18N = {
     faultType: "نوع العطل", segment: "المقطع", device: "الجهاز", sensor: "الحساس", size: "الحجم / الشدة",
     inject: "تشغيل السيناريو", reset: "إعادة للوضع الطبيعي", modelPerf: "دقة النموذج (اختبار على سيناريوهات جديدة)",
     perfNote: "تم القياس على بيانات محاكاة لم يرها النموذج أثناء التدريب. التفاصيل في reports/EVALUATION.md",
-    evidence: "الأدلة — لماذا قرر النموذج ذلك؟", modelVersion: "إصدار النموذج", latency: "زمن الاستدلال", drift: "انحراف البيانات",
-    driftStates: { ok: "طبيعي", drift: "يوجد انحراف — يُنصح بإعادة المعايرة", busy: "غير قابل للقياس أثناء التنبيه", warming_up: "—" },
-    footer: "نموذج أولي — بيانات تجريبية محاكاة لحساسات الضغط والتدفق وpH وEC والصوت والاهتزاز",
+    evidence: "الأدلة - لماذا قرر النموذج ذلك؟", modelVersion: "إصدار النموذج", latency: "زمن الاستدلال", drift: "انحراف البيانات",
+    driftStates: { ok: "طبيعي", drift: "يوجد انحراف - يُنصح بإعادة المعايرة", busy: "غير قابل للقياس أثناء التنبيه", warming_up: "-" },
+    footer: "نموذج أولي - بيانات تجريبية محاكاة لحساسات الضغط والتدفق وpH وEC والصوت والاهتزاز",
     warm: "جاري تجميع البيانات", warmMeta: n => `يحتاج النظام ${n} دقيقة إضافية من القراءات قبل أول تحليل`,
     devicesOk: "جميع الأجهزة متصلة", active: "نشط", resolved: "تمت المعالجة", minutes: "دقيقة",
     between: (a, b) => `بين الجهاز ${a} والجهاز ${b}`, kmEst: km => `الموقع التقديري: الكيلومتر ${km}`,
-    devLabel: d => `الجهاز ${d}`, segLabel: (a, b) => `المقطع ${a}–${b}`, sensorOn: (s, d) => `حساس ${s} — الجهاز ${d}`,
+    devLabel: d => `الجهاز ${d}`, segLabel: (a, b) => `المقطع ${a}-${b}`, sensorOn: (s, d) => `حساس ${s} - الجهاز ${d}`,
     truthNone: "الحقيقة المحاكاة: لا يوجد عطل", truth: t => `الحقيقة المحاكاة (للمقارنة فقط): ${t}`,
-    ingestMode: "وضع استقبال البيانات من الأجهزة", simMode: "وضع المحاكاة", m3h: "م³/س", noLoss: "—",
+    ingestMode: "وضع استقبال البيانات من الأجهزة", simMode: "وضع المحاكاة", m3h: "م³/س", noLoss: "-",
     simTime: t => `الوقت ${t}`, confirming: (s, p) => `${s}/${p}`,
     faults: { normal: "طبيعي", leak: "تسريب", blockage: "انسداد", contamination: "تلوث", corrosion: "تآكل", sensor_fault: "عطل حساس", watch: "غير مصنف" },
     levels: { low: "منخفضة", medium: "متوسطة", high: "عالية", critical: "حرجة" },
@@ -240,15 +240,15 @@ const I18N = {
     faultType: "Fault type", segment: "Segment", device: "Device", sensor: "Sensor", size: "Size / intensity",
     inject: "Run scenario", reset: "Back to normal", modelPerf: "Model accuracy (tested on unseen scenarios)",
     perfNote: "Measured on simulated data never used in training. Details in reports/EVALUATION.md",
-    evidence: "Evidence — why the model decided this", modelVersion: "Model version", latency: "Inference latency", drift: "Input drift",
-    driftStates: { ok: "OK", drift: "Drift — recalibration advised", busy: "not measurable during alert", warming_up: "—" },
-    footer: "Prototype — simulated pressure, flow, pH, EC, acoustic and vibration sensors",
+    evidence: "Evidence - why the model decided this", modelVersion: "Model version", latency: "Inference latency", drift: "Input drift",
+    driftStates: { ok: "OK", drift: "Drift - recalibration advised", busy: "not measurable during alert", warming_up: "-" },
+    footer: "Prototype - simulated pressure, flow, pH, EC, acoustic and vibration sensors",
     warm: "Collecting data", warmMeta: n => `The AI needs ${n} more minutes of readings before its first assessment`,
     devicesOk: "All devices online", active: "active", resolved: "resolved", minutes: "min",
     between: (a, b) => `Between Device ${a} and Device ${b}`, kmEst: km => `Estimated at km ${km}`,
-    devLabel: d => `Device ${d}`, segLabel: (a, b) => `Segment ${a}–${b}`, sensorOn: (s, d) => `${s} sensor — Device ${d}`,
+    devLabel: d => `Device ${d}`, segLabel: (a, b) => `Segment ${a}-${b}`, sensorOn: (s, d) => `${s} sensor - Device ${d}`,
     truthNone: "Simulated ground truth: no fault", truth: t => `Simulated ground truth (for comparison only): ${t}`,
-    ingestMode: "Device ingest mode", simMode: "Simulation mode", m3h: "m³/h", noLoss: "—",
+    ingestMode: "Device ingest mode", simMode: "Simulation mode", m3h: "m³/h", noLoss: "-",
     simTime: t => `t = ${t}`, confirming: (s, p) => `${s}/${p}`,
     faults: { normal: "Normal", leak: "Leak", blockage: "Blockage", contamination: "Contamination", corrosion: "Corrosion", sensor_fault: "Sensor fault", watch: "Unclassified" },
     levels: { low: "Low", medium: "Medium", high: "High", critical: "Critical" },
@@ -266,8 +266,8 @@ let metric = "pressure";
 let S = null;
 const $ = id => document.getElementById(id);
 const T = () => I18N[lang];
-const pct = v => v == null ? "—" : `${Math.round(v * 100)}%`;
-const fmtTime = m => { if (m == null) return "—"; const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = Math.floor(m % 60);
+const pct = v => v == null ? "-" : `${Math.round(v * 100)}%`;
+const fmtTime = m => { if (m == null) return "-"; const d = Math.floor(m / 1440), h = Math.floor(m % 1440 / 60), mm = Math.floor(m % 60);
   return `${lang === "ar" ? "اليوم" : "Day"} ${d + 1} ${String(h).padStart(2, "0")}:${String(mm).padStart(2, "0")}`; };
 
 function applyLang() {
@@ -360,7 +360,7 @@ function drawPipe(s) {
     if (d.latest) {
       g += `<text x="${cx}" y="${y + 62}" text-anchor="middle" font-size="12" fill="#14213d">${d.latest.pressure.toFixed(2)} bar</text>`;
       g += `<text x="${cx}" y="${y + 78}" text-anchor="middle" font-size="12" fill="#5b6b82">${d.latest.flow.toFixed(1)} m³/h</text>`;
-      g += `<text x="${cx}" y="${y + 94}" text-anchor="middle" font-size="11" fill="#5b6b82">pH ${d.latest.ph.toFixed(2)} · EC ${Math.round(d.latest.ec)}</text>`;
+      g += `<text x="${cx}" y="${y + 94}" text-anchor="middle" font-size="11" fill="#5b6b82">pH ${d.latest.ph.toFixed(2)} - EC ${Math.round(d.latest.ec)}</text>`;
     }
     if (d.battery_pct != null) g += `<text x="${cx}" y="${y + 112}" text-anchor="middle" font-size="10.5" fill="#8a96a6">🔋${Math.round(d.battery_pct)}% ⚡${d.power_w.toFixed(1)}W</text>`;
   });
@@ -404,7 +404,7 @@ function render(s) {
   if (!a) {
     banner.className = "warm"; $("bannerIcon").textContent = "…";
     $("bannerTitle").textContent = t.warm; $("bannerMeta").textContent = t.warmMeta(s.warmup_remaining);
-    $("kpiConf").textContent = "—"; $("kpiSev").textContent = "—";
+    $("kpiConf").textContent = "-"; $("kpiSev").textContent = "-";
   } else {
     const confirmedAlert = a.status === "alert" && a.confirmed;
     const cls = a.status === "normal" ? "normal" : (confirmedAlert ? "alert" : "watch");
@@ -412,9 +412,9 @@ function render(s) {
     $("bannerTitle").textContent = a.headline[lang];
     const fp = a.fault_probs[a.fault];
     $("bannerMeta").textContent = a.status === "normal" ? t.devicesOk :
-      `${t.faults[a.fault]} · ${t.confidence} ${pct(a.confidence)} · ${t.severity}: ${t.levels[a.severity.level]}`;
+      `${t.faults[a.fault]} - ${t.confidence} ${pct(a.confidence)} - ${t.severity}: ${t.levels[a.severity.level]}`;
     $("kpiConf").textContent = a.status === "normal" ? pct(a.fault_probs.normal) : pct(a.confidence);
-    $("kpiSev").textContent = a.status === "normal" ? "—" : t.levels[a.severity.level];
+    $("kpiSev").textContent = a.status === "normal" ? "-" : t.levels[a.severity.level];
 
     const probs = Object.entries(a.fault_probs).sort((x, y) => y[1] - x[1]);
     $("probs").innerHTML = probs.map(([k, v], i) => `<div class="bar ${i === 0 && k !== "normal" ? "top" : ""}"><span>${t.faults[k]}</span><div class="track"><div class="fill" style="width:${v * 100}%"></div></div><span>${pct(v)}</span></div>`).join("");
@@ -422,40 +422,40 @@ function render(s) {
     const loc = a.status === "alert" ? a.location : null;
     if (loc && loc.kind === "segment") {
       $("locMain").textContent = t.between(loc.between[0], loc.between[1]);
-      $("locSub").textContent = `${t.kmEst(loc.position_km.toFixed(2))} · ${t.confidence} ${pct(loc.confidence)}`;
+      $("locSub").textContent = `${t.kmEst(loc.position_km.toFixed(2))} - ${t.confidence} ${pct(loc.confidence)}`;
       $("segProbs").innerHTML = loc.segment_probs.map((p, j) => `<div class="bar ${j === loc.segment - 1 ? "top" : ""}"><span>${t.segLabel(j + 1, j + 2)}</span><div class="track"><div class="fill" style="width:${p * 100}%"></div></div><span>${pct(p)}</span></div>`).join("");
     } else if (loc && loc.kind === "device") {
       $("locMain").textContent = t.devLabel(loc.device);
-      $("locSub").textContent = `${t.sensorOn(t.sensors[loc.sensor], loc.device)} · ${t.confidence} ${pct(loc.confidence)}`;
+      $("locSub").textContent = `${t.sensorOn(t.sensors[loc.sensor], loc.device)} - ${t.confidence} ${pct(loc.confidence)}`;
       $("segProbs").innerHTML = loc.device_probs.map((p, j) => `<div class="bar ${j === loc.device - 1 ? "top" : ""}"><span>${t.devLabel(j + 1)}</span><div class="track"><div class="fill" style="width:${p * 100}%"></div></div><span>${pct(p)}</span></div>`).join("");
-    } else { $("locMain").textContent = "—"; $("locSub").textContent = ""; $("segProbs").innerHTML = ""; }
+    } else { $("locMain").textContent = "-"; $("locSub").textContent = ""; $("segProbs").innerHTML = ""; }
 
     const lvl = a.status === "normal" ? -1 : LEVELS.indexOf(a.severity.level);
-    $("sevMain").textContent = a.status === "normal" ? "—" : `${t.levels[a.severity.level]} (${pct(a.severity.score)})`;
+    $("sevMain").textContent = a.status === "normal" ? "-" : `${t.levels[a.severity.level]} (${pct(a.severity.score)})`;
     [...$("sevBar").children].forEach((el, i) => el.classList.toggle("on", i <= lvl));
     $("anomaly").textContent = `${a.anomaly_score.toFixed(3)} / ${a.anomaly_threshold.toFixed(3)}`;
     $("loss").textContent = a.estimated_loss_m3h != null && a.status === "alert" ? `${a.estimated_loss_m3h.toFixed(1)} ${t.m3h}` : t.noLoss;
-    $("streak").textContent = a.status === "alert" ? t.confirming(Math.min(a.streak, 3), 3) : "—";
+    $("streak").textContent = a.status === "alert" ? t.confirming(Math.min(a.streak, 3), 3) : "-";
 
     const ev = a.evidence || [];
     $("evTitle").classList.toggle("hide", !ev.length);
     $("evidence").innerHTML = ev.map(e => `<li><span class="z">${e.z > 0 ? "+" : ""}${e.z.toFixed(1)}σ</span><span>${e[lang]}</span></li>`).join("");
     $("recs").innerHTML = a.recommendations.map(r => `<li><span class="prio ${r.priority === "24h" ? "h24" : r.priority}">${t.prio[r.priority]}</span><span>${r[lang]}</span></li>`).join("");
   }
-  $("incidents").innerHTML = s.incidents.map(i => `<tr><td>${i.id}</td><td>${i.headline ? i.headline[lang] : t.faults[i.fault]}<div class="muted" style="font-size:12px">${t.confidence} ${pct(i.confidence)} · ${t.levels[i.severity.level]}</div></td><td>${fmtTime(i.start_ts)}</td><td><span class="chip" style="background:${i.status === "active" ? "var(--red-soft)" : "var(--green-soft)"};color:${i.status === "active" ? "var(--red)" : "var(--green)"}">${t[i.status]}</span></td></tr>`).join("") || `<tr><td colspan="4" class="muted">—</td></tr>`;
+  $("incidents").innerHTML = s.incidents.map(i => `<tr><td>${i.id}</td><td>${i.headline ? i.headline[lang] : t.faults[i.fault]}<div class="muted" style="font-size:12px">${t.confidence} ${pct(i.confidence)} - ${t.levels[i.severity.level]}</div></td><td>${fmtTime(i.start_ts)}</td><td><span class="chip" style="background:${i.status === "active" ? "var(--red-soft)" : "var(--green-soft)"};color:${i.status === "active" ? "var(--red)" : "var(--green)"}">${t[i.status]}</span></td></tr>`).join("") || `<tr><td colspan="4" class="muted">-</td></tr>`;
 
   const g = s.ground_truth;
   if (g) {
     let txt = t.truthNone;
     if (g.fault !== "normal") txt = t.truth(g.fault === "sensor_fault" ? t.sensorOn(t.sensors[g.sensor], g.device)
-      : `${t.faults[g.fault]} — ${t.between(g.between[0], g.between[1])}, km ${g.position_km.toFixed(2)}`);
+      : `${t.faults[g.fault]} - ${t.between(g.between[0], g.between[1])}, km ${g.position_km.toFixed(2)}`);
     $("truth").textContent = txt;
   }
   const h = s.model_health || {};
   $("health").innerHTML = [
-    [t.modelVersion, s.model_version || "—"],
-    [t.latency, h.latency_ms_p50 != null ? `${Math.round(h.latency_ms_p50)} ms` : "—"],
-    [t.drift, (t.driftStates[h.status] || "—") + (h.anomaly_rate != null ? ` (${pct(h.anomaly_rate)})` : "")],
+    [t.modelVersion, s.model_version || "-"],
+    [t.latency, h.latency_ms_p50 != null ? `${Math.round(h.latency_ms_p50)} ms` : "-"],
+    [t.drift, (t.driftStates[h.status] || "-") + (h.anomaly_rate != null ? ` (${pct(h.anomaly_rate)})` : "")],
   ].map(([k, v]) => `<div><span class="muted">${k}</span><b>${v}</b></div>`).join("");
   drawPipe(s); drawChart(s);
 }

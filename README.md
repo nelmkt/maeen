@@ -1,12 +1,12 @@
 <div align="center">
 
-# مَعين · Maeen
+# مَعين - Maeen
 
-**AI engineering for smart water-pipeline monitoring.**
+**Real-time detection, location and explanation of leaks and water-quality problems in water pipelines.**
 It turns raw in-pipe sensor streams into decisions: *what* is wrong, *where*, *how serious*, *why*, and *what to do*.
 
 ﴿ قُلْ أَرَأَيْتُمْ إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَاءٍ مَّعِينٍ ﴾ (الملك: ٣٠)
-*"Say: Have you considered — if your water were to sink away, who could bring you flowing water?"*
+*"Say: Have you considered: if your water were to sink away, who could bring you flowing water?"*
 
 </div>
 
@@ -31,7 +31,7 @@ All results come from scenarios **never seen in training**. Full report: [report
 
 | Streaming (minute-by-minute) | |
 |---|---|
-| Detection delay, median | **5 min** leak · 5 blockage · 6 contamination · 11 corrosion · 10 sensor fault |
+| Detection delay, median | **5 min** leak, 5 blockage, 6 contamination, 11 corrosion, 10 sensor fault |
 | False alarms in live operation | **0.06 / day** (17 simulated days) |
 | Fault position error | **~110 m** on a 5 km line |
 | Robustness at 2× sensor noise | 93.5% fault-type accuracy |
@@ -44,7 +44,7 @@ All results come from scenarios **never seen in training**. Full report: [report
 | | |
 |---|---|
 | **Input** | A sliding window of the last **30 minutes** × **6 devices** × **6 signals**: pressure, flow, pH, EC, acoustic, vibration |
-| **Outputs (multi-task)** | anomaly score · fault type (6 classes) · faulty segment + km position · faulty device + instrument · severity 0–1 |
+| **Outputs (multi-task)** | anomaly score, fault type (6 classes), faulty segment + km position, faulty device + instrument, severity 0-1 |
 | **Decision** | An alert is confirmed after 3 consistent minutes. The output is a headline, evidence, a confidence score, a severity level and prioritised recommendations |
 | **Constraints** | Very few false alarms (operators stop trusting noisy alarms), a location that a crew can act on, an explanation an operator can understand, and inference cheap enough to run every minute |
 
@@ -229,7 +229,7 @@ tests/           pytest suite
 1. **Sim-to-real.** Run the device prototype on a test rig, re-learn the commissioning baseline, and measure the gap between simulated and real data.
 2. **Labelling loop.** Crew findings ("leak confirmed at km 2.6") flow back as labels, and the model is fine-tuned on real plus simulated data.
 3. **Model comparison.** Benchmark sequence models (1D-CNN, temporal transformers) against the current feature-based gradient boosting, under the same quality gate.
-4. **Probability calibration** and conformal location intervals ("km 2.4–2.8 with 90% coverage").
+4. **Probability calibration** and conformal location intervals ("km 2.4-2.8 with 90% coverage").
 5. **Edge inference.** Run the anomaly detector on the device itself and send only alerts when the connection is poor. MQTT ingestion.
 
 ---
@@ -245,6 +245,6 @@ tests/           pytest suite
   - تحديد المقطع الصحيح بدقة 99.9٪
   - 0.06 إنذار كاذب في اليوم
   - اكتشاف التسريب خلال 5 دقائق تقريباً
-- **هندسة الذكاء الاصطناعي:** تجارب تُدار بملفات إعداد، وسجل لإصدارات النماذج مع بطاقة لكل نموذج، واختبار جودة تلقائي يمنع أي تحديث يُضعف دقة النموذج، ومراقبة لانحراف البيانات أثناء التشغيل.
+- **جودة النموذج وموثوقيته:** تجارب تُدار بملفات إعداد، وسجل لإصدارات النماذج مع بطاقة لكل نموذج، واختبار جودة تلقائي يمنع أي تحديث يُضعف دقة النموذج، ومراقبة لانحراف البيانات أثناء التشغيل.
 
 > جميع النتائج على بيانات محاكاة، ويجب إعادة قياسها على بيانات حقيقية من الميدان.

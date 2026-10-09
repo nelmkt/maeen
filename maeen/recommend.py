@@ -27,7 +27,7 @@ def headline(a: dict) -> dict:
     if status == "normal":
         return {"en": "All segments operating normally", "ar": "جميع مقاطع الخط تعمل بشكل طبيعي"}
     if status == "watch":
-        return {"en": "Unusual readings detected — under observation", "ar": "تم رصد قراءات غير معتادة — قيد المتابعة"}
+        return {"en": "Unusual readings detected - under observation", "ar": "تم رصد قراءات غير معتادة - قيد المتابعة"}
     en, ar = FAULT_NAMES[fault]
     if loc and loc["kind"] == "segment":
         a_, b_ = loc["between"]
@@ -68,7 +68,7 @@ def recommend(a: dict) -> list[dict]:
     else:
         a_, b_ = loc["between"]
         km = loc["position_km"]
-        seg_en, seg_ar = f"segment D{a_}–D{b_}", f"المقطع بين الجهاز {a_} والجهاز {b_}"
+        seg_en, seg_ar = f"segment D{a_}-D{b_}", f"المقطع بين الجهاز {a_} والجهاز {b_}"
         if fault == "leak":
             loss = a.get("estimated_loss_m3h") or 0.0
             if urgent:
@@ -77,8 +77,8 @@ def recommend(a: dict) -> list[dict]:
                        f"عزل {seg_ar} بإغلاق صمامات العزل القريبة من الجهازين."),
                     _r("immediate", f"Dispatch a repair crew with an acoustic correlator to km {km:.1f} (±0.3 km).",
                        f"إرسال فريق صيانة مع جهاز الترابط الصوتي إلى الكيلومتر {km:.1f} (±0.3 كم)."),
-                    _r("immediate", "Lower inlet pressure by 10–15% to limit water loss until the repair is done.",
-                       "خفض ضغط الدخول بنسبة 10–15٪ لتقليل الفاقد حتى يتم الإصلاح."),
+                    _r("immediate", "Lower inlet pressure by 10-15% to limit water loss until the repair is done.",
+                       "خفض ضغط الدخول بنسبة 10-15٪ لتقليل الفاقد حتى يتم الإصلاح."),
                     _r("24h", f"Notify customers downstream of Device {b_} about a possible supply interruption.",
                        f"إبلاغ المشتركين بعد الجهاز {b_} باحتمال انقطاع مؤقت في الإمداد."),
                 ]
@@ -102,7 +102,7 @@ def recommend(a: dict) -> list[dict]:
         elif fault == "blockage":
             recs += [
                 _r("immediate" if urgent else "24h",
-                   f"Check valve positions in {seg_en} — a partly closed valve is the most common cause.",
+                   f"Check valve positions in {seg_en} - a partly closed valve is the most common cause.",
                    f"التحقق من وضع الصمامات في {seg_ar}، فالصمام المغلق جزئياً هو السبب الأكثر شيوعاً."),
                 _r("24h" if urgent else "scheduled",
                    f"Inspect near km {km:.1f} for debris or sediment and plan flushing / pigging of the segment.",
@@ -126,8 +126,8 @@ def recommend(a: dict) -> list[dict]:
             recs += [
                 _r("scheduled", f"Schedule an ultrasonic wall-thickness inspection of {seg_en} within 2 weeks.",
                    f"جدولة فحص سماكة جدار الأنبوب بالموجات فوق الصوتية في {seg_ar} خلال أسبوعين."),
-                _r("24h", "Review water chemistry: low pH accelerates corrosion — adjust pH correction (target 7.2–8.0).",
-                   "مراجعة كيمياء المياه: انخفاض pH يسرّع التآكل — ضبط جرعات تعديل pH (الهدف 7.2–8.0)."),
+                _r("24h", "Review water chemistry: low pH accelerates corrosion - adjust pH correction (target 7.2-8.0).",
+                   "مراجعة كيمياء المياه: انخفاض pH يسرّع التآكل - ضبط جرعات تعديل pH (الهدف 7.2-8.0)."),
             ]
             if urgent:
                 recs.append(_r("scheduled", f"Add {seg_en} to the rehabilitation / replacement plan.",
@@ -136,6 +136,6 @@ def recommend(a: dict) -> list[dict]:
                            "متابعة اتجاه EC وpH لهذا المقطع شهرياً."))
 
     if a["confidence"] < 0.5:
-        recs.append(_r("monitor", "Confidence is moderate — confirm on site before any disruptive action.",
-                       "مستوى الثقة متوسط — يُنصح بالتأكد ميدانياً قبل اتخاذ أي إجراء يؤثر على الخدمة."))
+        recs.append(_r("monitor", "Confidence is moderate - confirm on site before any disruptive action.",
+                       "مستوى الثقة متوسط - يُنصح بالتأكد ميدانياً قبل اتخاذ أي إجراء يؤثر على الخدمة."))
     return recs

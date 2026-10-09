@@ -52,7 +52,7 @@ def latest_version() -> str | None:
 def load(version: str | None = None):
     version = version or latest_version()
     if version is None:
-        raise FileNotFoundError("no registered model — run `python -m maeen.train`")
+        raise FileNotFoundError("no registered model - run `python -m maeen.train`")
     return joblib.load(REGISTRY / version / "model.joblib")
 
 

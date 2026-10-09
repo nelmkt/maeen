@@ -39,10 +39,10 @@ Segment accuracy by fault: leak 99.7%, blockage 100.0%, contamination 100.0%, co
 
 | Leak size | Windows | Detected | Diagnosed as leak | Correct segment |
 |---|---|---|---|---|
-| 0–2% | 177 | 93.2% | 93.2% | 98.8% |
-| 2–5% | 223 | 100.0% | 100.0% | 100.0% |
-| 5–10% | 196 | 100.0% | 100.0% | 100.0% |
-| 10–100% | 159 | 100.0% | 100.0% | 100.0% |
+| 0-2% | 177 | 93.2% | 93.2% | 98.8% |
+| 2-5% | 223 | 100.0% | 100.0% | 100.0% |
+| 5-10% | 196 | 100.0% | 100.0% | 100.0% |
+| 10-100% | 159 | 100.0% | 100.0% | 100.0% |
 
 ![leak size sweep](leak_size_sweep.png)
 
@@ -89,6 +89,6 @@ Permutation importance of the fault classifier, summed per feature family:
 
 ## Inference latency
 
-Single 30-minute window, all five models + evidence + recommendations: **152 ms** median (165 ms p95). Batched: 0.55 ms per window.
+Single 30-minute window, all five models + evidence + recommendations: **149 ms** median (166 ms p95). Batched: 0.57 ms per window.
 
 > All results are on **simulated** data. They show the method works and where it struggles (very small leaks, slow corrosion); real-world accuracy has to be re-measured once field data is available.

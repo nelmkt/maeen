@@ -25,7 +25,7 @@ class PipeAI:
     2. fault classifier  normal / leak / blockage / contamination / corrosion / sensor_fault
     3. segment locator   which segment (between which two devices) holds a pipe fault, + km estimate
     4. device locator    which device and which instrument is faulty (sensor faults)
-    5. severity model    0–1 severity score → low / medium / high / critical
+    5. severity model    0-1 severity score → low / medium / high / critical
     plus an Explainer that reports the evidence behind every alert.
     """
 

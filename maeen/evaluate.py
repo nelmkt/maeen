@@ -90,7 +90,7 @@ def leak_size_sweep(preds: list[dict], y: pd.DataFrame) -> list[dict]:
         det = np.array([q["status"] != "normal" for q in p])
         diag = np.array([q["fault"] == "leak" for q in p])
         seg = np.array([q["location"]["segment"] - 1 if q["location"] and q["location"]["kind"] == "segment" else -9 for q in p])
-        rows.append({"leak_pct_of_flow": f"{lo}–{hi}%", "n": int(m.sum()), "detected": float(det.mean()),
+        rows.append({"leak_pct_of_flow": f"{lo}-{hi}%", "n": int(m.sum()), "detected": float(det.mean()),
                      "diagnosed_as_leak": float(diag.mean()),
                      "segment_correct": float((seg[diag] == y["segment"].to_numpy()[m][diag]).mean()) if diag.any() else None})
     return rows
@@ -235,7 +235,7 @@ def _plots(res: dict, sweep: list[dict], out: Path, importance: dict | None = No
                     color="white" if cmn[i, j] > 0.6 else "#222")
     ax.set_xlabel("predicted")
     ax.set_ylabel("true")
-    ax.set_title("Fault diagnosis — confusion matrix (test set)")
+    ax.set_title("Fault diagnosis - confusion matrix (test set)")
     fig.tight_layout()
     fig.savefig(out / "confusion_matrix.png", dpi=140)
     plt.close(fig)
@@ -267,7 +267,7 @@ def _plots(res: dict, sweep: list[dict], out: Path, importance: dict | None = No
 
 
 def _pct(v):
-    return "—" if v is None else f"{100 * v:.1f}%"
+    return "-" if v is None else f"{100 * v:.1f}%"
 
 
 def write_markdown(m: dict, path: Path):
@@ -307,7 +307,7 @@ def write_markdown(m: dict, path: Path):
           f"False alarms: **{st['false_alarms_per_day']:.2f} per day** of normal operation.", "",
           "| Fault | Runs | Detected | Median delay | Right type at alert | Right location at alert |", "|---|---|---|---|---|---|"]
     for r in st["per_fault"]:
-        delay = "—" if r["median_delay_min"] is None else f"{r['median_delay_min']:.0f} min"
+        delay = "-" if r["median_delay_min"] is None else f"{r['median_delay_min']:.0f} min"
         L.append(f"| {r['fault']} | {r['runs']} | {_pct(r['detected'])} | {delay} | {_pct(r['type_correct_at_alert'])} | {_pct(r['location_correct_at_alert'])} |")
     if m.get("baselines"):
         L += ["", "## Baselines: what the AI adds", "",

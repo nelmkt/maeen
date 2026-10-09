@@ -8,7 +8,7 @@ import numpy as np
 from .config import DEVICE_X, FAULTY_SENSORS, N_DEVICES, SEGMENT_KM
 from .simulator import Q0, Network, base_scenario, simulate
 
-# severity slider (0–1) → simulator magnitude and ramp per fault
+# severity slider (0-1) → simulator magnitude and ramp per fault
 _FAULT_SETUP = {
     "leak": lambda s: (0.25 * s, 3.0),
     "blockage": lambda s: (s, 5.0),

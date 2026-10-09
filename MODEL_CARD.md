@@ -1,4 +1,4 @@
-# Model card — Maeen PipeAI
+# Model card - Maeen PipeAI
 
 ## Model details
 - **What:** an ensemble of five models over one physics-aware feature extractor (165 features): an IsolationForest anomaly detector, a 6-class fault classifier, a segment classifier with a km regressor, a device/instrument classifier, and a severity regressor. An evidence explainer reports why each alert was raised.
@@ -16,8 +16,8 @@
 
 ## Training data
 - 9,000 labelled 30-minute windows from the physics simulator, plus 800 normal "commissioning" windows used to learn the baseline.
-- Class mix: normal 30% · leak 25% · blockage 11% · contamination 11% · corrosion 11% · sensor fault 11%.
-- Domain randomisation: sensor noise 0.6–2.2×, demand cycles, pump and consumer transients, fault size, location, start time and ramp speed.
+- Class mix: normal 30%, leak 25%, blockage 11%, contamination 11%, corrosion 11%, sensor fault 11%.
+- Domain randomisation: sensor noise 0.6-2.2×, demand cycles, pump and consumer transients, fault size, location, start time and ramp speed.
 
 ## Evaluation
 - Data held out by seed: 3,000 test windows, 1,500 windows at 2× noise, 200 streaming fault runs and 17 days of normal streaming.
@@ -29,7 +29,7 @@
 | Correct segment | 99.9% |
 | Position error | ~110 m |
 | False alarms in streaming | 0.06 per day |
-| Median detection delay | 5–11 min |
+| Median detection delay | 5-11 min |
 
 - The model beats the threshold-rule baseline (78.5% accuracy, 28.8% false alarms) and the raw-feature ML baseline (88.6% accuracy). Full details are in [reports/EVALUATION.md](reports/EVALUATION.md).
 

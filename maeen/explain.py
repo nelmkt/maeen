@@ -76,8 +76,8 @@ class Explainer:
         if base == "friction":
             a, b = seg(tag)
             pct = 100 * v / self.friction_base[a - 1]
-            return {"en": f"Pressure drop in D{a}–D{b} for the flow carried: {pct:+.0f}%{when_en}",
-                    "ar": f"هبوط الضغط في المقطع {a}–{b} نسبة للتدفق: {pct:+.0f}٪{when_ar}"}
+            return {"en": f"Pressure drop in D{a}-D{b} for the flow carried: {pct:+.0f}%{when_en}",
+                    "ar": f"هبوط الضغط في المقطع {a}-{b} نسبة للتدفق: {pct:+.0f}٪{when_ar}"}
         if base == "dec":
             a, b = seg(tag)
             return {"en": f"EC rise from D{a} to D{b}: {v:+.0f} µS/cm{when_en}",
