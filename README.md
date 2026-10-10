@@ -5,7 +5,9 @@
 **Real-time detection, location and explanation of leaks and water-quality problems in water pipelines.**
 It turns raw in-pipe sensor streams into decisions: *what* is wrong, *where*, *how serious*, *why*, and *what to do*.
 
-Designed and built by **[Nelly Almaktoum](https://github.com/nelmkt)**, technical lead and developer.
+Designed and built by **[Nelly Almaktoum](https://github.com/nelmkt)**, technical lead and developer. The working prototype is complete (October 2026).
+
+[Portfolio](https://nelmkt.com) - [GitHub](https://github.com/nelmkt) - [LinkedIn](https://www.linkedin.com/in/nelmkt/)
 
 ﴿ قُلْ أَرَأَيْتُمْ إِنْ أَصْبَحَ مَاؤُكُمْ غَوْرًا فَمَن يَأْتِيكُم بِمَاءٍ مَّعِينٍ ﴾ (الملك: ٣٠)
 *"Say: Have you considered: if your water were to sink away, who could bring you flowing water?"*
@@ -78,7 +80,7 @@ flowchart LR
 
 ## 3. Data: simulation first
 
-The real devices are still being built, so Maeen starts from a **physics-based simulator** ([maeen/simulator.py](maeen/simulator.py)). The same API later accepts real readings.
+Maeen is trained and stress-tested on a **physics-based simulator** ([maeen/simulator.py](maeen/simulator.py)) that covers far more fault scenarios than a real line could safely produce. The same API accepts readings from the real devices.
 
 - **Hydraulics** on a 10 m grid: friction loss ∝ Q², a source/pump curve, pressure-dependent customer demand, and metered off-takes in every segment
 - **Faults:**
@@ -240,7 +242,7 @@ tests/           pytest suite
 
 | Member | Background | Role |
 |---|---|---|
-| **Nelly Almaktoum** (نيللي المكتوم) | Computer Science | **Technical lead and sole developer.** Owned the whole technical side end to end: technical consulting and system design, turning the idea into a working system, the physics simulator and data, ML model design, training and evaluation, the quality gate, the cloud API, the dashboard, deployment and documentation |
+| **Nelly Almaktoum** (نيللي المكتوم) | Computer Science | **Technical lead and developer.** Owned the whole technical side end to end: technical consulting and system design, turning the idea into a working system, the physics simulator and data, ML model design, training and evaluation, the quality gate, the cloud API, the dashboard, deployment and documentation |
 | Mohammed Alzahrani (محمد الزهراني) | Water Resources Science and Management | Team member, project idea |
 | Joud Alkhateeb (جود الخطيب) | Chemistry | Team member, project idea |
 | Muhannad Almehri (مهند المهري) | Industrial Engineering | Team member, project idea |
@@ -250,7 +252,7 @@ tests/           pytest suite
 
 **مَعين** نظام متكامل لمراقبة خطوط المياه يعتمد على تعلّم الآلة. يجمع قراءات الحساسات (الضغط والتدفق وpH وEC والصوت والاهتزاز)، ثم يحللها ليكتشف المشكلة ويحدد نوعها ومكانها ومستوى خطورتها، ويوضح سبب قراره، ويقترح الإجراء المناسب.
 
-- **البيانات:** نبدأ بمحاكي فيزيائي للخط وللأعطال، لأن الحساسات الفعلية ما زالت قيد التطوير. والنظام نفسه يستقبل لاحقاً بيانات الأجهزة الحقيقية.
+- **البيانات:** دُرّب النظام واختُبر على محاكٍ فيزيائي للخط وللأعطال يغطي سيناريوهات أكثر بكثير مما يمكن إحداثه بأمان على خط حقيقي، والنظام نفسه يستقبل بيانات الأجهزة الحقيقية مباشرة.
 - **النموذج:** خمسة نماذج تعمل معاً. الأول يكتشف أي سلوك غير طبيعي، والثاني يصنّف العطل، والثالث يحدد المقطع والموقع بالكيلومتر، والرابع يحدد الجهاز والحساس المعطل، والخامس يقدّر الخطورة. ومعها جزء يشرح الأدلة التي بنى عليها النظام قراره.
 - **قياس الدقة:** اختبرنا النظام على سيناريوهات جديدة لم يرها أثناء التدريب:
   - تحديد نوع العطل بدقة 94٪، مقابل 78.5٪ بطريقة العتبات التقليدية
