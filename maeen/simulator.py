@@ -23,13 +23,13 @@ import numpy as np
 
 from .config import DEVICE_X, FAULT_TYPES, N_DEVICES, N_SEGMENTS, N_SENSORS, PIPE_FAULTS, PIPE_KM, SEGMENT_KM
 
-Q0 = 100.0  # nominal demand, m³/h
-P_SOURCE = 5.6  # bar, source head at zero flow
-C_SOURCE = 6e-5  # bar / (m³/h)², source curve
-F_FRICTION = 3e-5  # bar / km / (m³/h)²
-P_REF = 3.5  # bar, pressure at which customers draw their nominal demand
-K_BLOCK = 2e-4  # bar / (m³/h)², local loss of a full blockage
-V_TRANSPORT = 0.25  # km/min, speed at which a water-quality front travels
+Q0 = 100.0
+P_SOURCE = 5.6
+C_SOURCE = 6e-5
+F_FRICTION = 3e-5
+P_REF = 3.5
+K_BLOCK = 2e-4
+V_TRANSPORT = 0.25
 
 GRID = 501
 XS = np.linspace(0.0, PIPE_KM, GRID)
@@ -38,9 +38,7 @@ CELL_SEG = np.minimum((XS[:-1] / SEGMENT_KM).astype(int), N_SEGMENTS - 1)
 DEV_IDX = np.rint(DEVICE_X / DX).astype(int)
 OFFTAKE_IDX = np.rint((DEVICE_X[:-1] + SEGMENT_KM / 2) / DX).astype(int)
 
-# Measurement noise: pressure bar, flow (relative), pH, EC µS/cm, acoustic dB, vibration mm/s
 NOISE = np.array([0.015, 0.007, 0.02, 3.0, 0.7, 0.04])
-# Full-scale drift/offset of a faulty instrument: pressure bar, flow (relative), pH, EC µS/cm
 SENSOR_FAULT_SCALE = np.array([0.3, 0.08, 0.6, 80.0])
 SENSOR_FAULT_MODES = ("stuck", "drift", "offset", "noise")
 
@@ -49,10 +47,10 @@ SENSOR_FAULT_MODES = ("stuck", "drift", "offset", "noise")
 class Network:
     """Fixed properties of the monitored pipeline (what the model calibrates against)."""
 
-    roughness: np.ndarray  # per segment friction multiplier
-    offtake: np.ndarray  # per segment metered customer off-take, fraction of demand
-    bias: np.ndarray  # (devices, sensors) calibration error; flow column is a relative gain error
-    vib_base: np.ndarray  # per device background vibration
+    roughness: np.ndarray
+    offtake: np.ndarray
+    bias: np.ndarray
+    vib_base: np.ndarray
 
     @classmethod
     def default(cls, seed: int = 2026) -> "Network":
@@ -74,13 +72,13 @@ class Network:
 @dataclass
 class Scenario:
     fault: str = "normal"
-    segment: int = -1  # 0-based segment index for pipe faults
+    segment: int = -1
     position_km: float = float("nan")
     magnitude: float = 0.0
-    onset: float = float("inf")  # minute the fault starts
-    ramp: float = 1.0  # minutes for the fault to reach full size
-    device: int = -1  # 0-based device index for sensor faults
-    sensor: int = -1  # index into FAULTY_SENSORS
+    onset: float = float("inf")
+    ramp: float = 1.0
+    device: int = -1
+    sensor: int = -1
     mode: str = ""
     sign: float = 1.0
     demand_phase: float = 0.0
@@ -117,10 +115,10 @@ def random_scenario(
     """Draw a random scenario whose fault (if any) is visible inside [t_start, t_start + window)."""
     assert fault in FAULT_TYPES, fault
     scn = base_scenario(rng, noise_scale)
-    if rng.random() < 0.35:  # pump/valve operation at the source
+    if rng.random() < 0.35:
         scn.pump_step_t = t_start + rng.uniform(0, window)
         scn.pump_step_dp = rng.choice([-1.0, 1.0]) * rng.uniform(0.05, 0.2)
-    if rng.random() < 0.35:  # large customer switching on/off
+    if rng.random() < 0.35:
         scn.demand_step_t = t_start + rng.uniform(0, window)
         scn.demand_step_dq = rng.uniform(-0.12, 0.12)
     scn.fault = fault
@@ -185,7 +183,7 @@ def _physical(net: Network, scn: Scenario, t: np.ndarray):
     rough = F_FRICTION * net.roughness[CELL_SEG] * DX
     p_end = np.full(T, P_REF)
     p_leak = np.full(T, 4.0)
-    for _ in range(12):  # damped fixed point: demand and leak flow both depend on pressure
+    for _ in range(12):
         factor = np.sqrt(np.clip(p_end, 0.05, None) / P_REF)
         q_end = qd * factor
         sinks = np.zeros((T, GRID))
@@ -193,7 +191,7 @@ def _physical(net: Network, scn: Scenario, t: np.ndarray):
         ql = leak_s * Q0 * np.sqrt(np.clip(p_leak, 0, None) / 4.0)
         if has_sink:
             sinks[:, k] += ql
-        down = np.cumsum(sinks[:, ::-1], axis=1)[:, ::-1]  # flow withdrawn at or downstream of each grid point
+        down = np.cumsum(sinks[:, ::-1], axis=1)[:, ::-1]
         q_cell = q_end[:, None] + down[:, 1:]
         q_in = q_end + down[:, 0]
         p_in = P_SOURCE - C_SOURCE * q_in**2 + p_off
@@ -268,9 +266,9 @@ def _apply_sensor_fault(net: Network, scn: Scenario, t: np.ndarray, meas: np.nda
         delta = full * np.clip((t - scn.onset) / scn.ramp, 0, 1)
     elif scn.mode == "offset":
         delta = full * active
-    else:  # noise
+    else:
         delta = rng.normal(0, 8 * NOISE[s] * scn.magnitude * scn.noise_scale, len(t)) * active
-    if s == 1:  # flow faults are relative
+    if s == 1:
         meas[:, d, s] *= 1 + delta
     else:
         meas[:, d, s] += delta

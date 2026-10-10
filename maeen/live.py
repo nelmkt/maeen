@@ -8,7 +8,6 @@ import numpy as np
 from .config import DEVICE_X, FAULTY_SENSORS, N_DEVICES, SEGMENT_KM
 from .simulator import Q0, Network, base_scenario, simulate
 
-# severity slider (0-1) → simulator magnitude and ramp per fault
 _FAULT_SETUP = {
     "leak": lambda s: (0.25 * s, 3.0),
     "blockage": lambda s: (s, 5.0),
@@ -63,7 +62,7 @@ class LiveSimulator:
         """Advance one minute; returns (ts, frame (devices, sensors), telemetry list)."""
         frame, _ = simulate(self.net, self.scenario, [self.t], self.rng)
         frame = frame[0]
-        power = 15 * np.clip(frame[:, 1] / Q0, 0, None) ** 3  # micro-hydro turbine output, W
+        power = 15 * np.clip(frame[:, 1] / Q0, 0, None) ** 3
         self.battery = np.clip(self.battery + 0.02 * (power - 6) + self.rng.normal(0, 0.05, N_DEVICES), 20, 100)
         telemetry = [{"battery_pct": float(b), "power_w": float(p), "rssi_dbm": float(-60 - 4 * i + self.rng.normal(0, 2))}
                      for i, (b, p) in enumerate(zip(self.battery, power))]

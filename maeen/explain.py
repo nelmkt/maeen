@@ -45,7 +45,7 @@ class Explainer:
                 break
             m = _TAG.match(self.names[i])
             key = (m["base"].removeprefix("change_").removesuffix("_rel"), m["tag"]) if m else self.names[i]
-            if key in seen:  # one item per signal and place, keep the evidence diverse
+            if key in seen:
                 continue
             seen.add(key)
             text = self._describe(self.names[i], f[i] - self.median[i])
@@ -68,7 +68,7 @@ class Explainer:
         base = base.removeprefix("change_")
         when_en = " over the last 30 min" if changed else " vs normal"
         when_ar = " خلال آخر 30 دقيقة" if changed else " مقارنة بالوضع الطبيعي"
-        seg = lambda t: tuple(int(t[1:]) + d for d in (0, 1))  # "S3" -> (3, 4)
+        seg = lambda t: tuple(int(t[1:]) + d for d in (0, 1))
         if base == "flow_loss":
             a, b = seg(tag)
             return {"en": f"Flow lost between D{a} and D{b}: {v * 100:+.1f}% of inflow{when_en}",

@@ -11,7 +11,7 @@ def client(small_model, monkeypatch):
     monkeypatch.setenv("MAEEN_MODEL_PATH", str(path))
     import app.main
 
-    main = importlib.reload(app.main)  # MAEEN_MODE is read at import time
+    main = importlib.reload(app.main)
     with TestClient(main.app) as c:
         yield c
 

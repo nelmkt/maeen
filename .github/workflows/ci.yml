@@ -13,7 +13,6 @@ jobs:
       - run: pytest -q
 
   model-quality-gate:
-    # retrain from scratch and block the merge if accuracy, false alarms or latency regress
     runs-on: ubuntu-latest
     env:
       MAEEN_REGISTRY: ci_registry/registry

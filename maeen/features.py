@@ -14,8 +14,8 @@ import numpy as np
 from .config import N_DEVICES, N_SEGMENTS, SENSORS
 from .simulator import Q0
 
-RECENT = 8  # minutes averaged for the "current" state
-NOISE_SPAN = 15  # minutes used to estimate signal noise
+RECENT = 8
+NOISE_SPAN = 15
 
 
 def _quantities(S: np.ndarray) -> dict[str, np.ndarray]:
@@ -58,8 +58,6 @@ class FeatureExtractor:
         ac = qc["acoustic"] - self.base["acoustic"]
         feats.append(ac - np.median(ac, axis=1, keepdims=True))
 
-        # noise relative to the other devices (a single noisy/stuck instrument stands out even
-        # when the whole network is noisier than at commissioning) plus the network-wide level
         lognoise = np.log((X[:, -NOISE_SPAN:].std(1) + 1e-4) / self.noise)
         level = np.median(lognoise, axis=1, keepdims=True)
         feats.append((lognoise - level).reshape(n, -1))

@@ -3,7 +3,7 @@ import numpy as np
 
 N_DEVICES = 6
 SEGMENT_KM = 1.0
-DEVICE_X = np.arange(N_DEVICES, dtype=float) * SEGMENT_KM  # device positions along the main (km)
+DEVICE_X = np.arange(N_DEVICES, dtype=float) * SEGMENT_KM
 PIPE_KM = float(DEVICE_X[-1])
 N_SEGMENTS = N_DEVICES - 1
 
@@ -17,10 +17,9 @@ SENSOR_UNITS = {
     "acoustic": "dB",
     "vibration": "mm/s",
 }
-# Sensors that can develop an instrument fault in the simulator.
 FAULTY_SENSORS = SENSORS[:4]
 
-WINDOW = 30  # minutes of readings the model looks at for every decision
+WINDOW = 30
 
 FAULT_TYPES = ("normal", "leak", "blockage", "contamination", "corrosion", "sensor_fault")
 PIPE_FAULTS = ("leak", "blockage", "contamination", "corrosion")

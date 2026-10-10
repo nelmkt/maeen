@@ -89,7 +89,6 @@ class Hub:
             for ts in sorted(self.pending):
                 if len(self.pending[ts]) == N_DEVICES:
                     completed.append((ts, self.pending.pop(ts)))
-            # drop incomplete cycles that are clearly stale
             for ts in [t for t in self.pending if completed and t < completed[-1][0]]:
                 del self.pending[ts]
         for ts, cycle in completed:

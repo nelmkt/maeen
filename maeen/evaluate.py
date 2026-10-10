@@ -170,7 +170,7 @@ def streaming_test(ai, net, runs_per_fault: int = 40, normal_runs: int = 80, T: 
             t0 = rng.uniform(0, 3 * 1440)
             scn = random_scenario(rng, fault, t0, T, onset=t0 + onset_at if fault != "normal" else None)
             X, _ = simulate(net, scn, t0 + np.arange(T), rng)
-            windows = sliding_window_view(X, WINDOW, axis=0).transpose(0, 3, 1, 2)  # (T-W+1, W, dev, sens)
+            windows = sliding_window_view(X, WINDOW, axis=0).transpose(0, 3, 1, 2)
             preds = ai.predict(windows, explain=False)
             tracker = IncidentTracker()
             first = None
@@ -371,7 +371,7 @@ def main():
         metrics["quality_gate"] = check_gate(metrics, json.loads(Path(args.gate).read_text(encoding="utf-8")))
 
     registry.save_metrics(version, metrics)
-    if cfg["name"] == "default":  # the committed report always describes the default model
+    if cfg["name"] == "default":
         REPORTS.mkdir(exist_ok=True)
         (REPORTS / "metrics.json").write_text(json.dumps(metrics, indent=2, default=float), encoding="utf-8")
         _plots(metrics["window_test"], metrics["leak_size_sweep"], REPORTS, metrics.get("feature_importance"))

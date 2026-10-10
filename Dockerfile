@@ -3,7 +3,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-# train + register the model at build time (~2 min) so the container starts instantly
 RUN python -m maeen.train
 ENV PORT=8000
 EXPOSE 8000
