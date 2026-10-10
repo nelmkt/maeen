@@ -1,11 +1,3 @@
-"""Emulate the 6 field devices sending readings to the cloud API over HTTP.
-
-This is what a real device (ESP32 / Raspberry Pi with the sensors) would do every minute.
-Start the server in ingest mode first:
-
-    MAEEN_MODE=ingest uvicorn app.main:app --port 8000
-    python scripts/device_client.py --url http://localhost:8000 --fault leak --segment 3 --at 45
-"""
 from __future__ import annotations
 
 import argparse
