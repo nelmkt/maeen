@@ -32,8 +32,8 @@ class RuleBasedDetector:
             scores = {
                 "leak": r["flow_loss"].max(),
                 "blockage": r["friction"].max(),
-                "contamination": np.abs(r["dec"]).max() / 3,  # big EC jump
-                "corrosion": min(r["dec"].max(), -r["dph"].min()),  # EC up and pH down together
+                "contamination": np.abs(r["dec"]).max() / 3,
+                "corrosion": min(r["dec"].max(), -r["dph"].min()),
                 "sensor_fault": max(np.abs(r["rel_noise"]).max(), np.abs(r["jump"]).max()),
             }
             fault, score = max(scores.items(), key=lambda kv: kv[1])

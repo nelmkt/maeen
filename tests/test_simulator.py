@@ -17,7 +17,7 @@ def test_normal_flow_balance_matches_offtakes():
     q = true[..., 1] / (1 + NET.bias[:, 1])
     loss = (q[:, :-1] - q[:, 1:]) / q[:, -1:]
     assert np.allclose(loss, NET.offtake, rtol=0.05)
-    assert np.all(np.diff(true[..., 0] - NET.bias[:, 0], axis=1) < 0)  # pressure falls along the main
+    assert np.all(np.diff(true[..., 0] - NET.bias[:, 0], axis=1) < 0)
 
 
 def test_leak_removes_flow_in_its_segment_only():
@@ -27,7 +27,6 @@ def test_leak_removes_flow_in_its_segment_only():
     assert extra[:, 2].mean() > 0.05 * Q0
     assert np.abs(extra[:, [0, 1, 3, 4]]).max() < 0.3 * extra[:, 2].mean()
     assert info["severity"][-1] > 0.3
-    # leak noise is loudest at the devices closest to it
     assert set(np.argsort(leak[-1, :, 4] - normal[-1, :, 4])[-2:]) == {2, 3}
 
 

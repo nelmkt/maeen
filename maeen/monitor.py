@@ -62,7 +62,7 @@ class Monitor:
         self.times: deque = deque(maxlen=max(window, history))
         self.tracker = IncidentTracker(persistence)
         self.current: dict | None = None
-        self.recent: deque = deque(maxlen=60)  # last hour of (anomaly flag, input deviation, latency ms, status)
+        self.recent: deque = deque(maxlen=60)
 
     def push(self, frame: np.ndarray, ts: float) -> dict | None:
         self.frames.append(np.asarray(frame, dtype=float))
@@ -97,7 +97,7 @@ class Monitor:
             drift = out["anomaly_rate"] > 0.15 or out["input_deviation"] > 1.5
             out["status"] = "drift" if drift else "ok"
         else:
-            out["status"] = "busy"  # mostly alerts: drift is not measurable right now
+            out["status"] = "busy"
         return out
 
     @property

@@ -1,4 +1,3 @@
-# One-click cloud deploy on Render (https://render.com): New → Blueprint → pick this repo
 services:
   - type: web
     name: maeen

@@ -29,7 +29,6 @@ def train(cfg: dict, verbose: bool = True) -> PipeAI:
     net = Network.default()
     t = time.time()
     X_base = normal_windows(d["n_baseline"], seed=seed + 1, net=net)
-    # sensor quality varies between windows so the model copes with cheap or ageing sensors
     X, y = make_dataset(d["n_train"], seed=seed + 2, net=net, noise_scale=tuple(d["train_noise"]))
     sim_s = time.time() - t
     if verbose:
